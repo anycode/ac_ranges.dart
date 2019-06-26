@@ -54,6 +54,7 @@ class DateRange extends _Range<DateTime> {
   DateRange._() : super._(true);
 
   factory DateRange.parse(String input, {bool startInclusive, bool endInclusive}) {
+    if(input == null) return null;
     final Match match = regex.firstMatch(input);
     final DateRange dr = DateRange._();
     if (match != null) {
