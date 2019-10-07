@@ -110,7 +110,7 @@ class DateRange extends _Range<DateTime> {
   @override
   String toString() {
     final DateFormat df = DateFormat('yyyy-MM-dd');
-    return "${_startInclusive ? "[" : "("}${df.format(_start)},${df.format(_end)}${_endInclusive ? "]" : ")"}";
+    return "${_startInclusive && _start != null ? "[" : "("}${_start == null ? '-infinity' : df.format(_start)},${_end == null ? 'infinity' : df.format(_end)}${_endInclusive && _end != null ? "]" : ")"}";
   }
 
   @override

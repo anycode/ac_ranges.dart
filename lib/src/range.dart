@@ -173,7 +173,8 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
 
   // use _cmp(a,b,) if the other value is a range end too or is finite (not null) range start,
   // otherwise the other value is -infinite (null) range start which is always less
-  int _endCmp(TYPE other, [bool otherIsEnd = true]) => otherIsEnd || other != null ? _cmp(_end, other) : 1;
+  // MUST compare (other, this._end) to return correct [-1,0,1] value. Not (this._end, other)
+  int _endCmp(TYPE other, [bool otherIsEnd = true]) => otherIsEnd || other != null ? _cmp(other, _end) : 1;
 
   bool _endE(_Range<TYPE> that) => _endCmp(that._end) == 0 && _endInclusive == that._endInclusive;
 
