@@ -9,6 +9,10 @@ main() {
 	final DateRange dr6 = DateRange(DateTime(2019, 04, 09), DateTime(2019, 05, 11));
 	final DateRange dr7 = DateRange(DateTime(2019, 04, 01), DateTime(2019, 04, 8));
 	final DateRange dr8 = DateRange(DateTime(2019, 04, 09), DateTime(2019, 05, 11), startInclusive: false);
+	final DateTime dt1a = DateTime(2018, 12, 31);
+	final DateTime dt1b = DateTime(2019, 01, 05);
+	final DateTime dt1c = DateTime(2019, 03, 01);
+	final DateTime dt2 = DateTime(2019, 04, 08);
 
 	print("union $dr1 + $dr2 = ${dr1 + dr2}");
 	print("except $dr1 - $dr2 = ${dr1 - dr2}");
@@ -17,6 +21,12 @@ main() {
 	print("union $dr1 + $dr3 = ${dr1 + dr3}");
 	print("except $dr1 - $dr3 = ${dr1 - dr3}");
 	print("intersect $dr1 * $dr3 = ${dr1 * dr3}");
+
+	print("$dr1 contains $dt1a = ${dr1.contains(dt1a)}");
+	print("$dr1 contains $dt1b = ${dr1.contains(dt1b)}");
+	print("$dr1 contains $dt1c = ${dr1.contains(dt1c)}");
+	print("$dr4 contains $dt2 = ${dr4.contains(dt2)}");
+	print("$dr7 contains $dt2 = ${dr7.contains(dt2)}");
 
 	print("$dr3 sub $dr4 = ${dr3.isSubsetOf(dr4)}");
 	print("$dr3 sup $dr4 = ${dr3.isSupersetOf(dr4)}");
