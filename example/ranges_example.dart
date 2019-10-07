@@ -44,6 +44,23 @@ main() {
 		print("iteration date $dt");
 	}
 
-	final DateRange dr9 = DateRange(null, DateTime(2019, 05, 11));
+	final DateRange dri1 = DateRange(null, DateTime(2019, 05, 11));
+	final DateRange dri2 = DateRange(DateTime(2019, 05, 10), null);
+	final DateRange dri3 = DateRange(null, null);
+
+	print("union $dri1 + $dri2 = ${dri1 + dri2}");
+	print("except $dri1 - $dri2 = ${dri1 - dri2}");
+	print("intersect $dri1 * $dri2 = ${dri1 * dri2}");
+	print("except $dri3 - $dr4 = ${dri3 - dr4}");
+
+	print("$dri1 contains $dt1a = ${dri1.contains(dt1a)}");
+	print("$dri1 contains $dt1b = ${dri1.contains(dt1b)}");
+	print("$dri1 contains $dt1c = ${dri1.contains(dt1c)}");
+	print("$dri2 contains $dt1a = ${dri2.contains(dt1a)}");
+	print("$dri2 contains $dt1b = ${dri2.contains(dt1b)}");
+	print("$dri2 contains $dt1c = ${dri2.contains(dt1c)}");
+	print("$dri3 contains $dt1a = ${dri3.contains(dt1a)}");
+	print("$dri3 contains $dt1b = ${dri3.contains(dt1b)}");
+	print("$dri3 contains $dt1c = ${dri3.contains(dt1c)}");
 
 }
