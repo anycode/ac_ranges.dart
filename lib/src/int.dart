@@ -8,13 +8,13 @@ part of ranges;
 ///  @IntRangeConverter()
 ///  IntRange intRange;
 ///
-class IntRangeConverter implements JsonConverter<IntRange, Object> {
+class IntRangeConverter implements JsonConverter<IntRange, String> {
 
   const IntRangeConverter();
 
   @override
-  IntRange fromJson(Object json) {
-    return IntRange.parse(json as String);
+  IntRange fromJson(String json) {
+    return IntRange.parse(json);
   }
 
   @override
@@ -31,13 +31,13 @@ class IntRangeConverter implements JsonConverter<IntRange, Object> {
 ///  @IntRangesConverter()
 ///  List<IntRange> intRanges;
 ///
-class IntRangesConverter implements JsonConverter<List<IntRange>, Object> {
+class IntRangesConverter implements JsonConverter<List<IntRange>, List<String>> {
 
   const IntRangesConverter();
 
   @override
-  List<IntRange> fromJson(Object json) {
-    return (json as List).map((input) => IntRange.parse(input as String)).toList();
+  List<IntRange> fromJson(List<String> json) {
+    return (json).map((input) => IntRange.parse(input)).toList();
   }
 
   @override
@@ -83,12 +83,12 @@ class IntRange extends _NumRange {
 
   @override
   num _next(num value) {
-    return value + 1;
+    return value == null ? null : value + 1;
   }
 
   @override
   num _prev(num value) {
-    return value - 1;
+    return value == null ? null : value - 1;
   }
 
 }

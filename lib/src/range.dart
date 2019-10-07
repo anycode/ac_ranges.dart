@@ -2,8 +2,9 @@ part of ranges;
 
 abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> implements Comparable<_Range> {
 
-  // ignore: avoid_positional_boolean_parameters
-  _Range(this._start, this._end, this._startInclusive, this._endInclusive, this._discrete);
+  _Range(this._start, this._end, bool startInclusive, bool endInclusive, this._discrete) :
+        this._startInclusive = _start == null ? false : startInclusive,
+        this._endInclusive = _end == null ? false : endInclusive;
 
   _Range._(this._discrete);
 
@@ -134,8 +135,8 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
   bool contains(Object obj) {
     if(!(obj is TYPE)) return false;
     TYPE element = obj as TYPE;
-    final int startCmp = _start.compareTo(element);
-    final int endCmp = _end.compareTo(element);
+    final int startCmp = _start?.compareTo(element) ?? -1; // -infinity is less than any value
+    final int endCmp = _end?.compareTo(element) ?? 1; // infinity is greater than any value
     return (startCmp == -1 || startCmp == 0 && _startInclusive) && (endCmp == 1 || endCmp == 0 && _endInclusive);
   }
 
@@ -154,41 +155,50 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
   _Range<TYPE> operator *(_Range<TYPE> that) => intersect(that);
 
   // private helper methods
-  int _startCmp(_Range<TYPE> that) => _start.compareTo(that._start);
+  static int _cmp<TYPE extends Comparable<TYPE>>(TYPE a, TYPE b) => a != null && b != null ? a.compareTo(b)  : a == null ? -1 : b == null ? 1 : 0;
 
-  bool _startE(_Range<TYPE> that) => _startCmp(that) == 0 && _startInclusive == that._startInclusive;
+  // use _cmp(a,b,) if the other value is a range start too or is finite (not null) range end,
+  // otherwise the other value is infinite (null) range end which is always greater
+  int _startCmp(TYPE other, [bool otherIsStart = true]) => otherIsStart || other != null ? _cmp(_start, other) : -1;
 
-  bool _startL(_Range<TYPE> that) => _startCmp(that) == -1 || _startCmp(that) == 0 && _startInclusive && ! that._startInclusive;
+  bool _startE(_Range<TYPE> that) => _startCmp(that._start) == 0 && _startInclusive == that._startInclusive;
 
-  bool _startLE(_Range<TYPE> that) => _startCmp(that) == -1 || _startCmp(that) == 0 && (_startInclusive || ! that._startInclusive);
+  bool _startL(_Range<TYPE> that) => _startCmp(that._start) == -1 || _startCmp(that._start) == 0 && _startInclusive && ! that._startInclusive;
 
-  bool _startG(_Range<TYPE> that) => _startCmp(that) == 1 || _startCmp(that) == 0 && that._startInclusive && ! _startInclusive;
+  bool _startLE(_Range<TYPE> that) => _startCmp(that._start) == -1 || _startCmp(that._start) == 0 && (_startInclusive || ! that._startInclusive);
 
-  bool _startGE(_Range<TYPE> that) => _startCmp(that) == 1 || _startCmp(that) == 0 && (that._startInclusive || ! _startInclusive);
+  bool _startG(_Range<TYPE> that) => _startCmp(that._start) == 1 || _startCmp(that._start) == 0 && that._startInclusive && ! _startInclusive;
 
-  int _endCmp(_Range<TYPE> that) => _end.compareTo(that._end);
+  bool _startGE(_Range<TYPE> that) => _startCmp(that._start) == 1 || _startCmp(that._start) == 0 && (that._startInclusive || ! _startInclusive);
 
-  bool _endE(_Range<TYPE> that) => _endCmp(that) == 0 && _endInclusive == that._endInclusive;
+  // use _cmp(a,b,) if the other value is a range end too or is finite (not null) range start,
+  // otherwise the other value is -infinite (null) range start which is always less
+  int _endCmp(TYPE other, [bool otherIsEnd = true]) => otherIsEnd || other != null ? _cmp(_end, other) : 1;
 
-  bool _endL(_Range<TYPE> that) => _endCmp(that) == -1 || _endCmp(that) == 0 && that._endInclusive && ! _endInclusive;
+  bool _endE(_Range<TYPE> that) => _endCmp(that._end) == 0 && _endInclusive == that._endInclusive;
 
-  bool _endLE(_Range<TYPE> that) => _endCmp(that) == -1 || _endCmp(that) == 0 && (that._endInclusive || ! _endInclusive);
+  bool _endL(_Range<TYPE> that) => _endCmp(that._end) == -1 || _endCmp(that._end) == 0 && that._endInclusive && ! _endInclusive;
 
-  bool _endG(_Range<TYPE> that) => _endCmp(that) == 1 || _endCmp(that) == 0 && _endInclusive && ! that._endInclusive;
+  bool _endLE(_Range<TYPE> that) => _endCmp(that._end) == -1 || _endCmp(that._end) == 0 && (that._endInclusive || ! _endInclusive);
 
-  bool _endGE(_Range<TYPE> that) => _endCmp(that) == 1 || _endCmp(that) == 0 && (_endInclusive || ! that._endInclusive);
+  bool _endG(_Range<TYPE> that) => _endCmp(that._end) == 1 || _endCmp(that._end) == 0 && _endInclusive && ! that._endInclusive;
+
+  bool _endGE(_Range<TYPE> that) => _endCmp(that._end) == 1 || _endCmp(that._end) == 0 && (_endInclusive || ! that._endInclusive);
 
   // Adjacency
-  // ranges are adjacent if A.end and B.start are equal and at least one is inclusice
-  // ---][--- OK
-  // ---](--- OK
-  // ---)[--- OK
-  // ---)(--- NOK
-  // or if ranges are discrete (int, date) and A.end and B.start are inclusive and are adjacent
-  // ---]+1[--- OK
+  // ranges A and B are adjacent if A.end and B.start are not null and
+  // either A.end and B.start are equal and at least one is inclusive
+  // A---][---B OK
+  // A---](---B OK
+  // A---)[---B OK
+  // A---)(---B NOK
+  // or A and B are discrete (int, date) and A.end and B.start are inclusive and are adjacent
+  // A---]+1[---B OK
+  // doesn't consider reverse adjacency
   static bool _adjacent<TYPE extends Comparable<TYPE>>(_Range<TYPE> a, _Range<TYPE> b) {
-    return (a._end.compareTo(b._start) == 0 && (a._endInclusive || b._startInclusive))
-        || (a._discrete && a._next(a._end).compareTo(b._start) == 0 && a._endInclusive && b._startInclusive);
+    return (a._end != null && b._start != null) &&
+        ((a._endCmp(b._start, false) == 0 && (a._endInclusive || b._startInclusive))
+            || (a._discrete && b._startCmp(a._next(a._end), false) == 0 && a._endInclusive && b._startInclusive));
   }
 
   bool _esAdjacent(_Range<TYPE> that) {
@@ -238,19 +248,21 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
 
   // return start/end of range with possible inclusion override. For non discrete ranges return unmodified values
   // see comments in void _overrideInclusion() for more
-  TYPE start({bool inclusive}) => ! _discrete || inclusive == null || _startInclusive == inclusive ? _start : inclusive ? _next(_start) : _prev(_start);
-  TYPE end({bool inclusive}) => ! _discrete || inclusive == null || _endInclusive == inclusive ? _end : inclusive ? _prev(_end) : _next(_end);
+  TYPE start({bool inclusive}) => ! _discrete || _start == null || inclusive == null || _startInclusive == inclusive ? _start : inclusive ? _next(_start) : _prev(_start);
+  TYPE end({bool inclusive}) => ! _discrete || _end == null || inclusive == null || _endInclusive == inclusive ? _end : inclusive ? _prev(_end) : _next(_end);
   bool get startInclusive => _startInclusive;
   bool get endInclusive => _endInclusive;
 
   @override
   int compareTo(_Range other) {
-    int startCmp = _startCmp(other);
-    return startCmp != 0 ? startCmp : _endCmp(other);
+    int startCmp = _startCmp(other._start);
+    return startCmp != 0 ? startCmp : _endCmp(other._end);
   }
 
   @override
-  Iterator<TYPE> get iterator => _discrete ? _RangeIterator<TYPE>(this) : throw Exception('Cannot iterate over non-discrete range');
+  Iterator<TYPE> get iterator => _discrete && _start != null && _end != null
+      ? _RangeIterator<TYPE>(this)
+      : throw Exception('Cannot iterate over non-discrete and/or infinite range');
 
 }
 

@@ -8,13 +8,13 @@ part of ranges;
 ///  @DoubleRangeConverter()
 ///  DoubleRange doubleRange;
 ///
-class DoubleRangeConverter implements JsonConverter<DoubleRange, Object> {
+class DoubleRangeConverter implements JsonConverter<DoubleRange, String> {
 
   const DoubleRangeConverter();
 
   @override
-  DoubleRange fromJson(Object json) {
-    return DoubleRange.parse(json as String);
+  DoubleRange fromJson(String json) {
+    return DoubleRange.parse(json);
   }
 
   @override
@@ -31,13 +31,13 @@ class DoubleRangeConverter implements JsonConverter<DoubleRange, Object> {
 ///  @DoubleRangesConverter()
 ///  List<DoubleRange> doubleRanges;
 ///
-class DoubleRangesConverter implements JsonConverter<List<DoubleRange>, Object> {
+class DoubleRangesConverter implements JsonConverter<List<DoubleRange>, List<String>> {
 
   const DoubleRangesConverter();
 
   @override
-  List<DoubleRange> fromJson(Object json) {
-    return (json as List).map((input) => DoubleRange.parse(input as String)).toList();
+  List<DoubleRange> fromJson(List<String> json) {
+    return (json).map((input) => DoubleRange.parse(input)).toList();
   }
 
   @override

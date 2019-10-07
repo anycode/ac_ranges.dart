@@ -8,13 +8,13 @@ part of ranges;
 ///  @DateRangeConverter()
 ///  DateRange dateRange;
 ///
-class DateRangeConverter implements JsonConverter<DateRange, Object> {
+class DateRangeConverter implements JsonConverter<DateRange, String> {
 
   const DateRangeConverter();
 
   @override
-  DateRange fromJson(Object json) {
-    return DateRange.parse(json as String);
+  DateRange fromJson(String json) {
+    return DateRange.parse(json);
   }
 
   @override
@@ -31,13 +31,13 @@ class DateRangeConverter implements JsonConverter<DateRange, Object> {
 ///  @DateRangesConverter()
 ///  List<DateRange> dateRanges;
 ///
-class DateRangesConverter implements JsonConverter<List<DateRange>, Object> {
+class DateRangesConverter implements JsonConverter<List<DateRange>, List<String>> {
 
   const DateRangesConverter();
 
   @override
-  List<DateRange> fromJson(Object json) {
-    return (json as List).map((input) => DateRange.parse(input as String)).toList();
+  List<DateRange> fromJson(List<String> json) {
+    return (json).map((input) => DateRange.parse(input)).toList();
   }
 
   @override
@@ -55,22 +55,57 @@ class DateRange extends _Range<DateTime> {
 
   factory DateRange.parse(String input, {bool startInclusive, bool endInclusive}) {
     if(input == null) return null;
-    final Match match = regex.firstMatch(input);
     final DateRange dr = DateRange._();
+    Match match;
+    // date - date range
+    match = regexValVal.firstMatch(input);
     if (match != null) {
       dr._startInclusive = match.group(1) == "[";
       dr._start = DateTime.parse(match.group(2) + "T00:00:00Z");
       dr._end = DateTime.parse(match.group(3) + "T00:00:00Z");
       dr._endInclusive = match.group(4) == "]";
       dr._overrideInclusion(startInclusive, endInclusive);
+      return dr;
     }
-    return dr;
+    // -infinity - infinity range
+    match = regexInfInf.firstMatch(input);
+    if (match != null) {
+      dr._startInclusive = false; // infinity is always open
+      dr._start = null;
+      dr._end = null;
+      dr._endInclusive = false; // infinity is always open
+      return dr;
+    }
+    // -infinity - date range
+    match = regexInfVal.firstMatch(input);
+    if (match != null) {
+      dr._startInclusive = false; // infinity is always open
+      dr._start = null;
+      dr._end = DateTime.parse(match.group(3) + "T00:00:00Z");
+      dr._endInclusive = match.group(4) == "]";
+      dr._overrideInclusion(null, endInclusive);
+      return dr;
+    }
+    // date - infinity range
+    match = regexValInf.firstMatch(input);
+    if (match != null) {
+      dr._startInclusive = match.group(1) == "[";
+      dr._start = DateTime.parse(match.group(2) + "T00:00:00Z");
+      dr._end = null;
+      dr._endInclusive = false; // infinity is always open
+      dr._overrideInclusion(startInclusive, null);
+      return dr;
+    }
+    return null;
   }
 
   // valid ranges [] incusive, () exclusive
   // [date,date], [date,date), (date, date], (date, date)
   static const String dateRe = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
-  static RegExp regex = RegExp("([\\(\\[])\\s*($dateRe)\\s*,\\s*($dateRe)\\s*([\\]\\)])");
+  static RegExp regexInfInf = RegExp("([\\(\\[])\\s*(-infinity)\\s*,\\s*(infinity)\\s*([\\]\\)])");
+  static RegExp regexInfVal = RegExp("([\\(\\[])\\s*(-infinity)\\s*,\\s*($dateRe)\\s*([\\]\\)])");
+  static RegExp regexValInf = RegExp("([\\(\\[])\\s*($dateRe)\\s*,\\s*(infinity)\\s*([\\]\\)])");
+  static RegExp regexValVal = RegExp("([\\(\\[])\\s*($dateRe)\\s*,\\s*($dateRe)\\s*([\\]\\)])");
 
   @override
   String toString() {
@@ -85,12 +120,12 @@ class DateRange extends _Range<DateTime> {
 
   @override
   DateTime _next(DateTime value) {
-    return value.add(Duration(days: 1));
+    return value?.add(Duration(days: 1));
   }
 
   @override
   DateTime _prev(DateTime value) {
-    return value.subtract(Duration(days: 1));
+    return value?.subtract(Duration(days: 1));
   }
 
   /// DO NOT CALL initializeDateFormatting() HERE!!!!
