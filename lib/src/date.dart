@@ -1,51 +1,5 @@
 part of ranges;
 
-///
-///  DataRangeConverter annotation
-///  use with the DataRange members
-///  e.g.
-///  @JsonKey(name: 'date_range')
-///  @DateRangeConverter()
-///  DateRange dateRange;
-///
-class DateRangeConverter implements JsonConverter<DateRange, String> {
-
-  const DateRangeConverter();
-
-  @override
-  DateRange fromJson(String json) {
-    return DateRange.parse(json);
-  }
-
-  @override
-  String toJson(DateRange range) {
-    return range.toString();
-  }
-}
-
-///
-///  DataRangesConverter annotation
-///  use with the List of DataRange members
-///  e.g.
-///  @JsonKey(name: 'date_ranges')
-///  @DateRangesConverter()
-///  List<DateRange> dateRanges;
-///
-class DateRangesConverter implements JsonConverter<List<DateRange>, List<String>> {
-
-  const DateRangesConverter();
-
-  @override
-  List<DateRange> fromJson(List<String> json) {
-    return (json).map((input) => DateRange.parse(input)).toList();
-  }
-
-  @override
-  List<String> toJson(List<DateRange> ranges) {
-    return ranges.map((DateRange range) => range.toString()).toList();
-  }
-}
-
 class DateRange extends _Range<DateTime> {
 
   DateRange(DateTime start, DateTime end, {bool startInclusive = true, bool endInclusive = false}) :
@@ -138,14 +92,14 @@ class DateRange extends _Range<DateTime> {
   String format(String fmt, String dateFormat, {String locale, String inclusiveTag, String exclusiveTag}) {
     final DateFormat df = DateFormat(dateFormat, locale);
     String buffer = fmt
-        .replaceAll("{{start}}", df.format(_start) +
+        .replaceAll('{{start}}', _start == null ? '' : df.format(_start) +
         (_startInclusive
-          ? inclusiveTag != null ? inclusiveTag : ""
-          : exclusiveTag != null ? exclusiveTag : ""))
-        .replaceAll("{{end}}", df.format(_end) +
+          ? inclusiveTag != null ? inclusiveTag : ''
+          : exclusiveTag != null ? exclusiveTag : ''))
+        .replaceAll('{{end}}', _end == null ? '' : df.format(_end) +
         (_endInclusive
-          ? inclusiveTag != null  ? inclusiveTag : ""
-          : exclusiveTag != null ? exclusiveTag : ""));
+          ? inclusiveTag != null  ? inclusiveTag : ''
+          : exclusiveTag != null ? exclusiveTag : ''));
     return buffer;
   }
 

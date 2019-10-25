@@ -63,4 +63,7 @@ main() {
 	print("$dri3 contains $dt1b = ${dri3.contains(dt1b)}");
 	print("$dri3 contains $dt1c = ${dri3.contains(dt1c)}");
 
+	final DateRange drx1 = DateRange(DateTime(2020, 02, 15), DateTime(2020, 02, 22));
+	final DateRange drx2 = DateRange(DateTime(2020, 02, 15), DateTime(2020, 02, 18));
+	print("$drx2 is subset of $drx1 = ${drx2.isSubsetOf(drx1)}");
 }

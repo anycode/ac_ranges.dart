@@ -132,6 +132,7 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
 
   // A (this)  contains E (element) if
   // ( E > As || E == As && A[ ) && ( E < Ae || E = Ae && A] )
+  @override
   bool contains(Object obj) {
     if(!(obj is TYPE)) return false;
     TYPE element = obj as TYPE;
@@ -154,12 +155,19 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
 
   _Range<TYPE> operator *(_Range<TYPE> that) => intersect(that);
 
-  // private helper methods
-  static int _cmp<TYPE extends Comparable<TYPE>>(TYPE a, TYPE b) => a != null && b != null ? a.compareTo(b)  : a == null ? -1 : b == null ? 1 : 0;
-
-  // use _cmp(a,b,) if the other value is a range start too or is finite (not null) range end,
-  // otherwise the other value is infinite (null) range end which is always greater
-  int _startCmp(TYPE other, [bool otherIsStart = true]) => otherIsStart || other != null ? _cmp(_start, other) : -1;
+  int _startCmp(TYPE other, [bool otherIsStart = true]) =>
+      _start != null && other != null
+          // compare _start and other if both are not null,
+          ? _start.compareTo(other)
+          // check null values (-infinity) if other is start date
+          : otherIsStart
+          // if _start is null (= -infinity) it's always less,
+          // if other is null (= -infinity) _start is always greater,
+          // otherwise both are null (= -infinity) so they're equal
+          ? _start == null ? -1 : other == null ? 1 : 0
+          // other is end date and _start is null (-infinity) and/or other is null (+infinity)
+          // so start is always less than other
+          : -1;
 
   bool _startE(_Range<TYPE> that) => _startCmp(that._start) == 0 && _startInclusive == that._startInclusive;
 
@@ -171,10 +179,19 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
 
   bool _startGE(_Range<TYPE> that) => _startCmp(that._start) == 1 || _startCmp(that._start) == 0 && (that._startInclusive || ! _startInclusive);
 
-  // use _cmp(a,b,) if the other value is a range end too or is finite (not null) range start,
-  // otherwise the other value is -infinite (null) range start which is always less
-  // MUST compare (other, this._end) to return correct [-1,0,1] value. Not (this._end, other)
-  int _endCmp(TYPE other, [bool otherIsEnd = true]) => otherIsEnd || other != null ? _cmp(other, _end) : 1;
+  int _endCmp(TYPE other, [bool otherIsEnd = true]) =>
+      _end != null && other != null
+          // compare _end and other if both are not null,
+          ? _end.compareTo(other)
+          // check null values (+infinity) if other is end date
+          : otherIsEnd
+          // if _end is null (= +infinity) it's always greater,
+          // if other is null (= +infinity) _end is always less,
+          // otherwise both are null (= +infinity) so they're equal
+          ? _end == null ? 1 : other == null ? -1 : 0
+          // other is start date and _end is null (+infinity) and/or other is null (-infinity)
+          // so end is always grater than other
+          : 1;
 
   bool _endE(_Range<TYPE> that) => _endCmp(that._end) == 0 && _endInclusive == that._endInclusive;
 
