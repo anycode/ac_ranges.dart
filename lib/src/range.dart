@@ -62,17 +62,20 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
     final List<_Range<TYPE>> result = [];
     //if (this.start < that.start && this.end > that.end) {
     if (isSupersetOf(that)) {
-      result
-      ..add(newInstance()
+      if(_startL(that)) {
+        result.add(newInstance()
           .._startInclusive = _startInclusive
           .._start = _start
           .._end = that._start
-          .._endInclusive = ! that._startInclusive)
-        ..add(newInstance()
-          .._startInclusive = ! that._endInclusive
+          .._endInclusive = !that._startInclusive);
+      }
+      if(_endG(that)) {
+        result.add(newInstance()
+          .._startInclusive = !that._endInclusive
           .._start = that._end
           .._end = _end
           .._endInclusive = _endInclusive);
+      }
     } else if(isSubsetOf(that)) {
       // empty
     } else if (_esOverlap(that) || _esAdjacent(that)) {

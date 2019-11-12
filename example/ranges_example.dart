@@ -66,4 +66,14 @@ main() {
 	final DateRange drx1 = DateRange(DateTime(2020, 02, 15), DateTime(2020, 02, 22));
 	final DateRange drx2 = DateRange(DateTime(2020, 02, 15), DateTime(2020, 02, 18));
 	print("$drx2 is subset of $drx1 = ${drx2.isSubsetOf(drx1)}");
+
+	final DateRange dre1 = DateRange(DateTime(2019, 12, 28), DateTime(2020, 04, 01));
+	final DateRange dre2 = DateRange(DateTime(2019, 12, 28), DateTime(2020, 01, 04));
+	final DateRange dre3 = DateRange(DateTime(2020, 01, 04), DateTime(2020, 01, 11));
+	final List<DateRange> drex1 = dre1.except(dre2).map((x) => x as DateRange).toList();
+	final List<DateRange> drex2 = [];
+	drex1.forEach((DateRange x) => drex2.addAll(x.except(dre3).map((x) => x as DateRange).toList()));
+	print("$dre1 exclude $dre2 = $drex1");
+	print("$drex1 exclude $dre3 = $drex2");
+
 }

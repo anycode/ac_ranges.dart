@@ -8,6 +8,15 @@ void main() {
   String b = drp.toString();
   print("string $a => DateRange.toString() => $b");
 
+  final DateRange dre1 = DateRange(DateTime(2019, 12, 28), DateTime(2020, 04, 01));
+  final DateRange dre2 = DateRange(DateTime(2019, 12, 28), DateTime(2020, 01, 04));
+  final DateRange dre3 = DateRange(DateTime(2020, 01, 04), DateTime(2020, 01, 11));
+  final List<DateRange> drex1 = dre1.except(dre2);
+  final List<DateRange> drex2 = [];
+  drex1.forEach((DateRange x) => drex2.addAll(x.except(dre3) as List<DateRange>));
+  print("$dre1 exclude $dre2 = $drex1");
+  print("$dre1 exclude $dre2 exclude $dre3 = $drex2");
+
   final DateRange dr1 = DateRange(DateTime(2019, 01, 01), DateTime(2019, 02, 28));
   final DateRange dr2 = DateRange(DateTime(2019, 02, 01), DateTime(2019, 03, 28));
   final DateRange dr3 = DateRange(DateTime(2019, 04, 01), DateTime(2019, 04, 28));
@@ -72,13 +81,6 @@ void main() {
   print("$drs2 subset $drs1e = ${drs2.isSubsetOf(drs1e)}");
   print("$drs3 subset $drs1e = ${drs3.isSubsetOf(drs1e)}");
   print("$drs2 subset $drs1i = ${drs2.isSubsetOf(drs1i)}");
-
-  final DateRange dre1 = DateRange(DateTime(2019, 04, 01), DateTime(2019, 05, 16));
-  final DateRange dre2 = DateRange(DateTime(2019, 04, 15), DateTime(2019, 05, 03));
-  final List dre = dre1.except(dre2);
-  //List<DateRange> drx = <DateRange>[]..addAll(dre);
-  print("$dre1 except $dre2 = ${dre1.except(dre2)} / $dre");
-
 
   final DateRange iter1 = DateRange(DateTime(2019, 04, 01), DateTime(2019, 04, 7));
   print("Iterate [) range $iter1");
