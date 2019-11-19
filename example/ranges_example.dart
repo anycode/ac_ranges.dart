@@ -76,4 +76,16 @@ main() {
 	print("$dre1 exclude $dre2 = $drex1");
 	print("$drex1 exclude $dre3 = $drex2");
 
+	final List<DateRange> drl1 = [
+		DateRange(DateTime(2019, 12, 22), DateTime(2020, 02, 01)),
+		DateRange(DateTime(2020, 03, 01), DateTime(2020, 04, 01)),
+	];
+	final List<DateRange> drl2 = [
+		DateRange(DateTime(2019, 12, 25), DateTime(2019, 12, 27)),
+		DateRange(DateTime(2020, 01, 03), DateTime(2020, 01, 08)),
+		DateRange(DateTime(2020, 01, 22), DateTime(2020, 01, 25)),
+	];
+	final List<DateRange> drl3 = DateRange.listExcept(drl1, drl2);
+	print("listExcept($drl1, $drl2) = $drl3");
+
 }

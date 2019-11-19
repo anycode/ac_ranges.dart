@@ -57,6 +57,10 @@ class DoubleRange extends _NumRange {
   static RegExp regexValInf = RegExp("([\\(\\[])\\s*($doubleRe)\\s*,\\s*(infinity)\\s*([\\]\\)])");
   static RegExp regexValVal = RegExp("([\\(\\[])\\s*($doubleRe)\\s*,\\s*($doubleRe)\\s*([\\]\\)])");
 
+  static List<DoubleRange> listExcept(List<DoubleRange> source, List<DoubleRange> exceptions) {
+    return _Range._listExcept(source, exceptions).map((r) => r as DoubleRange).toList();
+  }
+
   @override
   _Range<num> newInstance() {
     return DoubleRange._();

@@ -61,6 +61,10 @@ class DateRange extends _Range<DateTime> {
   static RegExp regexValInf = RegExp("([\\(\\[])\\s*($dateRe)\\s*,\\s*(infinity)\\s*([\\]\\)])");
   static RegExp regexValVal = RegExp("([\\(\\[])\\s*($dateRe)\\s*,\\s*($dateRe)\\s*([\\]\\)])");
 
+  static List<DateRange> listExcept(List<DateRange> source, List<DateRange> exceptions) {
+    return _Range._listExcept(source, exceptions).map((r) => r as DateRange).toList();
+  }
+
   @override
   String toString() {
     final DateFormat df = DateFormat('yyyy-MM-dd');

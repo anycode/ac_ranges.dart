@@ -60,6 +60,10 @@ class IntRange extends _NumRange {
   static RegExp regexValInf = RegExp("([\\(\\[])\\s*($intRe)\\s*,\\s*(infinity)\\s*([\\]\\)])");
   static RegExp regexValVal = RegExp("([\\(\\[])\\s*($intRe)\\s*,\\s*($intRe)\\s*([\\]\\)])");
 
+  static List<IntRange> listExcept(List<IntRange> source, List<IntRange> exceptions) {
+    return _Range._listExcept(source, exceptions).map((r) => r as IntRange).toList();
+  }
+
   @override
   _Range<num> newInstance() {
     return IntRange._();

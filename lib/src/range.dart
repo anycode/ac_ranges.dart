@@ -274,6 +274,16 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
   bool get startInclusive => _startInclusive;
   bool get endInclusive => _endInclusive;
 
+  static List<_Range<TYPE>> _listExcept<TYPE extends Comparable<TYPE>>(List<_Range<TYPE>> source, List<_Range<TYPE>> exceptions) {
+    List<_Range<TYPE>> ranges = [ ... source ];
+    exceptions.forEach((_Range<TYPE> er) {
+      final List<_Range<TYPE>> tmpRanges = [];
+      ranges.forEach((_Range<TYPE> sr) => tmpRanges.addAll(sr.except(er)));
+      ranges = tmpRanges;
+    });
+    return ranges;
+  }
+
   @override
   int compareTo(_Range other) {
     int startCmp = _startCmp(other._start);
