@@ -88,4 +88,10 @@ main() {
 	final List<DateRange> drl3 = DateRange.listExcept(drl1, drl2);
 	print("listExcept($drl1, $drl2) = $drl3");
 
+	// A [2020-02-29,2020-03-08), B [2020-02-29,2020-03-07), B.subset(A)
+	final DateRange drak1 = DateRange.parse('[2020-02-29,2020-03-07)');
+	final DateRange drak2 = DateRange.parse('[2020-02-29,2020-03-08)');
+	print("$drak1.isSubsetOf($drak2) = ${drak1.isSubsetOf(drak2)}");
+	print("$drak2.isSupersetOf($drak1) = ${drak2.isSupersetOf(drak1)}");
+
 }

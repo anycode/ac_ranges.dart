@@ -3,7 +3,8 @@ part of ranges;
 class DateRange extends _Range<DateTime> {
 
   DateRange(DateTime start, DateTime end, {bool startInclusive = true, bool endInclusive = false}) :
-        super(start, end, startInclusive, endInclusive, true);
+        super(DateTime.utc(start.year, start.month, start.day), DateTime.utc(end.year, end.month, end.day),
+          startInclusive, endInclusive, true);
 
   DateRange._() : super._(true);
 
