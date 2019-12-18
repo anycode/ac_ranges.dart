@@ -172,6 +172,7 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
           // so start is always less than other
           : -1;
 
+  // ignore: unused_element
   bool _startE(_Range<TYPE> that) => _startCmp(that._start) == 0 && _startInclusive == that._startInclusive;
 
   bool _startL(_Range<TYPE> that) => _startCmp(that._start) == -1 || _startCmp(that._start) == 0 && _startInclusive && ! that._startInclusive;
@@ -196,6 +197,7 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
           // so end is always grater than other
           : 1;
 
+  // ignore: unused_element
   bool _endE(_Range<TYPE> that) => _endCmp(that._end) == 0 && _endInclusive == that._endInclusive;
 
   bool _endL(_Range<TYPE> that) => _endCmp(that._end) == -1 || _endCmp(that._end) == 0 && that._endInclusive && ! _endInclusive;
@@ -204,6 +206,7 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
 
   bool _endG(_Range<TYPE> that) => _endCmp(that._end) == 1 || _endCmp(that._end) == 0 && _endInclusive && ! that._endInclusive;
 
+  // ignore: unused_element
   bool _endGE(_Range<TYPE> that) => _endCmp(that._end) == 1 || _endCmp(that._end) == 0 && (_endInclusive || ! that._endInclusive);
 
   // Adjacency
