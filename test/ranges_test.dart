@@ -9,9 +9,9 @@ void main() {
   final DateRange dre1 = DateRange(DateTime(2019, 12, 28), DateTime(2020, 04, 01));
   final DateRange dre2 = DateRange(DateTime(2019, 12, 28), DateTime(2020, 01, 04));
   final DateRange dre3 = DateRange(DateTime(2020, 01, 04), DateTime(2020, 01, 11));
-  final List<DateRange> drex1 = dre1.except(dre2); // as List<DateRange>;
+  final List<DateRange> drex1 = dre1.except(dre2).cast<DateRange>();
   final List<DateRange> drex2 = [];
-  drex1.forEach((DateRange x) => drex2.addAll(x.except(dre3) as List<DateRange>));
+  drex1.forEach((DateRange x) => drex2.addAll(x.except(dre3).cast<DateRange>()));
   print("$dre1 exclude $dre2 = $drex1");
   print("$dre1 exclude $dre2 exclude $dre3 = $drex2");
 
