@@ -1,24 +1,22 @@
 part of ranges;
 
 class DateRange extends _Range<DateTime> {
-
-  DateRange(DateTime start, DateTime end, {bool startInclusive = true, bool endInclusive = false}) :
-        super(start == null ? null : DateTime.utc(start.year, start.month, start.day),
-          end == null ? null : DateTime.utc(end.year, end.month, end.day),
-          startInclusive, endInclusive, true);
+  DateRange(DateTime? start, DateTime? end, {bool startInclusive = true, bool endInclusive = false})
+      : super(start == null ? null : DateTime.utc(start.year, start.month, start.day),
+            end == null ? null : DateTime.utc(end.year, end.month, end.day), startInclusive, endInclusive, true);
 
   DateRange._() : super._(true);
 
-  factory DateRange.parse(String input, {bool startInclusive, bool endInclusive}) {
-    if(input == null) return null;
+  static DateRange? parse(String? input, {bool? startInclusive, bool? endInclusive}) {
+    if (input == null) return null;
     final DateRange dr = DateRange._();
-    Match match;
+    Match? match;
     // date - date range
     match = regexValVal.firstMatch(input);
     if (match != null) {
       dr._startInclusive = match.group(1) == "[";
-      dr._start = DateTime.parse(match.group(2) + "T00:00:00Z");
-      dr._end = DateTime.parse(match.group(3) + "T00:00:00Z");
+      dr._start = DateTime.parse(match.group(2)! + "T00:00:00Z");
+      dr._end = DateTime.parse(match.group(3)! + "T00:00:00Z");
       dr._endInclusive = match.group(4) == "]";
       dr._overrideInclusion(startInclusive, endInclusive);
       return dr;
@@ -37,7 +35,7 @@ class DateRange extends _Range<DateTime> {
     if (match != null) {
       dr._startInclusive = false; // infinity is always open
       dr._start = null;
-      dr._end = DateTime.parse(match.group(3) + "T00:00:00Z");
+      dr._end = DateTime.parse(match.group(3)! + "T00:00:00Z");
       dr._endInclusive = match.group(4) == "]";
       dr._overrideInclusion(null, endInclusive);
       return dr;
@@ -46,7 +44,7 @@ class DateRange extends _Range<DateTime> {
     match = regexValInf.firstMatch(input);
     if (match != null) {
       dr._startInclusive = match.group(1) == "[";
-      dr._start = DateTime.parse(match.group(2) + "T00:00:00Z");
+      dr._start = DateTime.parse(match.group(2)! + "T00:00:00Z");
       dr._end = null;
       dr._endInclusive = false; // infinity is always open
       dr._overrideInclusion(startInclusive, null);
@@ -70,7 +68,7 @@ class DateRange extends _Range<DateTime> {
   @override
   String toString() {
     final DateFormat df = DateFormat('yyyy-MM-dd');
-    return "${_startInclusive && _start != null ? "[" : "("}${_start == null ? '-infinity' : df.format(_start)},${_end == null ? 'infinity' : df.format(_end)}${_endInclusive && _end != null ? "]" : ")"}";
+    return "${_startInclusive && _start != null ? "[" : "("}${_start == null ? '-infinity' : df.format(_start!)},${_end == null ? 'infinity' : df.format(_end!)}${_endInclusive && _end != null ? "]" : ")"}";
   }
 
   @override
@@ -79,12 +77,12 @@ class DateRange extends _Range<DateTime> {
   }
 
   @override
-  DateTime _next(DateTime value) {
+  DateTime? _next(DateTime? value) {
     return value?.add(Duration(days: 1));
   }
 
   @override
-  DateTime _prev(DateTime value) {
+  DateTime? _prev(DateTime? value) {
     return value?.subtract(Duration(days: 1));
   }
 
@@ -95,18 +93,33 @@ class DateRange extends _Range<DateTime> {
   ///  Init Date Formatting locale in caller's call before calling DateRange.format(), e.g.
   ///  initializeDateFormatting()
   ///   .then((_) => daterange.format("{{start}} - {{end}}", "E dd.MM.", locale: "cs_CZ");
-  String format(String fmt, String dateFormat, {String locale, String inclusiveTag, String exclusiveTag}) {
+  String format(String fmt, String dateFormat, {String? locale, String? inclusiveTag, String? exclusiveTag}) {
     final DateFormat df = DateFormat(dateFormat, locale);
     String buffer = fmt
-        .replaceAll('{{start}}', _start == null ? '' : df.format(_start) +
-        (_startInclusive
-          ? inclusiveTag != null ? inclusiveTag : ''
-          : exclusiveTag != null ? exclusiveTag : ''))
-        .replaceAll('{{end}}', _end == null ? '' : df.format(_end) +
-        (_endInclusive
-          ? inclusiveTag != null  ? inclusiveTag : ''
-          : exclusiveTag != null ? exclusiveTag : ''));
+        .replaceAll(
+            '{{start}}',
+            _start == null
+                ? ''
+                : df.format(_start!) +
+                    (_startInclusive
+                        ? inclusiveTag != null
+                            ? inclusiveTag
+                            : ''
+                        : exclusiveTag != null
+                            ? exclusiveTag
+                            : ''))
+        .replaceAll(
+            '{{end}}',
+            _end == null
+                ? ''
+                : df.format(_end!) +
+                    (_endInclusive
+                        ? inclusiveTag != null
+                            ? inclusiveTag
+                            : ''
+                        : exclusiveTag != null
+                            ? exclusiveTag
+                            : ''));
     return buffer;
   }
-
 }

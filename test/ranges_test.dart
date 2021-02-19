@@ -1,16 +1,15 @@
 import 'package:ranges/ranges.dart';
 
 void main() {
-
   String a = "[2019-01-01,2019-02-10)";
-  final DateRange drp = DateRange.parse(a);
+  final DateRange? drp = DateRange.parse(a);
   String b = drp.toString();
   print("string $a => DateRange.toString() => $b");
 
   final DateRange dre1 = DateRange(DateTime(2019, 12, 28), DateTime(2020, 04, 01));
   final DateRange dre2 = DateRange(DateTime(2019, 12, 28), DateTime(2020, 01, 04));
   final DateRange dre3 = DateRange(DateTime(2020, 01, 04), DateTime(2020, 01, 11));
-  final List<DateRange> drex1 = dre1.except(dre2);
+  final List<DateRange> drex1 = dre1.except(dre2); // as List<DateRange>;
   final List<DateRange> drex2 = [];
   drex1.forEach((DateRange x) => drex2.addAll(x.except(dre3) as List<DateRange>));
   print("$dre1 exclude $dre2 = $drex1");
@@ -83,29 +82,28 @@ void main() {
 
   final DateRange iter1 = DateRange(DateTime(2019, 04, 01), DateTime(2019, 04, 7));
   print("Iterate [) range $iter1");
-  for(DateTime dt in iter1) {
+  for (DateTime dt in iter1) {
     print("iteration date $dt");
   }
 
   final DateRange iter2 = DateRange(DateTime(2019, 04, 01), DateTime(2019, 04, 7), endInclusive: true);
   print("Iterate [] range $iter2");
-  for(DateTime dt in iter2) {
+  for (DateTime dt in iter2) {
     print("iteration date $dt");
   }
 
   final DateRange iter3 = DateRange(DateTime(2019, 04, 01), DateTime(2019, 04, 7), startInclusive: false);
   print("Iterate () range $iter3");
-  for(DateTime dt in iter3) {
+  for (DateTime dt in iter3) {
     print("iteration date $dt");
   }
 
   final DateRange iter4 = DateRange(DateTime(2019, 04, 01), DateTime(2019, 04, 7), startInclusive: false, endInclusive: true);
   print("Iterate (] range $iter4");
-  for(DateTime dt in iter4) {
+  for (DateTime dt in iter4) {
     print("iteration date $dt");
   }
 
   print("First of $iter1 is ${iter1.first}");
   print("Last of $iter1 is ${iter1.last}");
-
 }

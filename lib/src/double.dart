@@ -1,21 +1,21 @@
 part of ranges;
 
 class DoubleRange extends _NumRange {
-
-  DoubleRange(double start, double end, {bool startInclusive = true, bool endInclusive = false}) :
-        super(start, end, startInclusive, endInclusive, false);
+  DoubleRange(double start, double end, {bool startInclusive = true, bool endInclusive = false})
+      : super(start, end, startInclusive, endInclusive, false);
 
   DoubleRange._() : super._(false);
 
-  factory DoubleRange.parse(String input) {
+  static DoubleRange? parse(String? input) {
+    if (input == null) return null;
     final DoubleRange ir = DoubleRange._();
-    Match match;
+    Match? match;
     match = regexValVal.firstMatch(input);
     // double - double range
     if (match != null) {
       ir._startInclusive = match.group(1) == "[";
-      ir._start = double.parse(match.group(2));
-      ir._end = double.parse(match.group(6));
+      ir._start = double.parse(match.group(2)!);
+      ir._end = double.parse(match.group(6)!);
       ir._endInclusive = match.group(10) == "]";
       return ir;
     }
@@ -33,7 +33,7 @@ class DoubleRange extends _NumRange {
     if (match != null) {
       ir._startInclusive = false;
       ir._start = null;
-      ir._end = double.parse(match.group(6));
+      ir._end = double.parse(match.group(6)!);
       ir._endInclusive = match.group(10) == "]";
       return ir;
     }
@@ -41,7 +41,7 @@ class DoubleRange extends _NumRange {
     match = regexValInf.firstMatch(input);
     if (match != null) {
       ir._startInclusive = match.group(1) == "[";
-      ir._start = double.parse(match.group(2));
+      ir._start = double.parse(match.group(2)!);
       ir._end = null;
       ir._endInclusive = false;
       return ir;
@@ -68,13 +68,12 @@ class DoubleRange extends _NumRange {
 
   // double has no next/prev values
   @override
-  num _next(num value) {
+  num? _next(num? value) {
     return value;
   }
 
   @override
-  num _prev(num value) {
+  num? _prev(num? value) {
     return value;
   }
-
 }
