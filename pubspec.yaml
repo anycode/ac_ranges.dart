@@ -1,6 +1,6 @@
 name: ranges
 description: Date / Int / Double ranges
-version: 3.0.1
+version: 3.0.2
 #homepage: https://www.example.com
 #author: edlman <email@example.com>
 publish_to: 'none'

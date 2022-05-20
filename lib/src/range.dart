@@ -318,6 +318,7 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
 class _RangeIterator<TYPE extends Comparable<TYPE>> implements Iterator<TYPE> {
   final _Range<TYPE> _range;
   TYPE _element;
+  bool _moveNext = false;
 
   _RangeIterator(this._range) : _element = _range.start(inclusive: true)!;
 
@@ -326,7 +327,12 @@ class _RangeIterator<TYPE extends Comparable<TYPE>> implements Iterator<TYPE> {
 
   @override
   bool moveNext() {
-    _element = _range._next(_element)!;
+    if(_moveNext) {
+      // do not move to next element yet to return the first one
+      _element = _range._next(_element)!;
+    } else {
+      _moveNext = true;
+    }
     return _element.compareTo(_range.end(inclusive: true)!) <= 0;
   }
 }
