@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:ranges/ranges.dart';
 import 'package:test/test.dart';
 
