@@ -10,7 +10,7 @@ class IntRange extends _NumRange {
     if (input == null) return null;
     final IntRange ir = IntRange._();
     Match? match;
-    // int - date range
+    // int - int range
     match = regexValVal.firstMatch(input);
     if (match != null) {
       ir._startInclusive = match.group(1) == "[";
@@ -29,7 +29,7 @@ class IntRange extends _NumRange {
       ir._endInclusive = false; // infinity is always open
       return ir;
     }
-    // -infinity - date range
+    // -infinity - int range
     match = regexInfVal.firstMatch(input);
     if (match != null) {
       ir._startInclusive = false; // infinity is always open
@@ -39,7 +39,7 @@ class IntRange extends _NumRange {
       ir._overrideInclusion(null, endInclusive);
       return ir;
     }
-    // date - infinity range
+    // int - infinity range
     match = regexValInf.firstMatch(input);
     if (match != null) {
       ir._startInclusive = match.group(1) == "[";
@@ -53,7 +53,7 @@ class IntRange extends _NumRange {
   }
 
   // valid ranges [] incusive, () exclusive
-  // [date,date], [date,date), (date, date], (date, date)
+  // [int,int], [int,int), (int,int], (int,int)
   static const String intRe = "[+-]?(0|[1-9][0-9]*)";
   static RegExp regexInfInf = RegExp("([\\(\\[])\\s*(-infinity)\\s*,\\s*(infinity)\\s*([\\]\\)])");
   static RegExp regexInfVal = RegExp("([\\(\\[])\\s*(-infinity)\\s*,\\s*($intRe)\\s*([\\]\\)])");

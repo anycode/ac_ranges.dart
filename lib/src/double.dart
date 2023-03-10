@@ -50,7 +50,7 @@ class DoubleRange extends _NumRange {
   }
 
   // valid ranges [] incusive, () exclusive
-  // [date,date], [date,date), (date, date], (date, date)
+  // [double,double], [double,double), (double,double], (double,double)
   static const String doubleRe = "[+-]?(0|[1-9][0-9]*)(\\.[0-9]+([eE][-+]?[0-9]+)?)?";
   static RegExp regexInfInf = RegExp("([\\(\\[])\\s*(-infinity)\\s*,\\s*(infinity)\\s*([\\]\\)])");
   static RegExp regexInfVal = RegExp("([\\(\\[])\\s*(-infinity)\\s*,\\s*($doubleRe)\\s*([\\]\\)])");
