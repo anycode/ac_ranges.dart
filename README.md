@@ -9,7 +9,7 @@ Created from templates made available by Stagehand under a BSD-style
 
 A simple usage example:
 
-    import 'package:iconv/iconv.dart';
+    import 'package:ranges/ranges.dart';
 
     main() {
       var awesome = new Awesome();

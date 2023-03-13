@@ -213,6 +213,14 @@ void main() {
       expect(iter1.first, DateTime.utc(2019,04,01));
       expect(iter1.last, DateTime.utc(2019,04,06));
     });
+
+    test('equality', () {
+      final DateRange dr1 = DateRange(DateTime(2019, 04, 01), DateTime(2019, 04, 7));
+      final DateRange dr2 = DateRange(DateTime(2019, 04, 01), DateTime(2019, 04, 7));
+      expect(dr1 == dr2, true);
+      expect(dr1.hashCode == dr2.hashCode, true);
+      expect(dr1.compareTo(dr2), 0);
+    });
   });
 
   group('Numeric Ranges tests', () {

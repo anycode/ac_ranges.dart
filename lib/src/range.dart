@@ -156,6 +156,9 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
 
   _Range<TYPE>? operator *(_Range<TYPE> that) => intersect(that);
 
+  @override
+  bool operator ==(Object? that) => that is _Range<TYPE> && this.compareTo(that) == 0;
+
   int _startCmp(TYPE? other, [bool otherIsStart = true]) => _start != null && other != null
       // compare _start and other if both are not null,
       ? _start!.compareTo(other)
@@ -313,6 +316,9 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
   Iterator<TYPE> get iterator => _discrete && _start != null && _end != null
       ? _RangeIterator<TYPE>(this)
       : throw Exception('Cannot iterate over non-discrete and/or infinite range');
+
+  @override
+  int get hashCode => _start.hashCode ^ _end.hashCode ^ _startInclusive.hashCode ^ _endInclusive.hashCode;
 }
 
 class _RangeIterator<TYPE extends Comparable<TYPE>> implements Iterator<TYPE> {
