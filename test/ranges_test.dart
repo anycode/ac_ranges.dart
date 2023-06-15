@@ -5,7 +5,9 @@ void main() {
   String a = "[2019-01-01,2019-02-10)";
   final DateRange drp = DateRange.parse(a);
   String b = drp.toString();
+  String f = drp.format('{{start}} - {{end}}', 'E d.M.y');
   print("string $a => DateRange.toString() => $b");
+  print("string $a => DateRange.format() => $f");
 
   final DateRange dre1 = DateRange(DateTime(2019, 12, 28), DateTime(2020, 04, 01));
   final DateRange dre2 = DateRange(DateTime(2019, 12, 28), DateTime(2020, 01, 04));

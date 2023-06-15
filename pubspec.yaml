@@ -1,11 +1,11 @@
 name: ranges
 description: Date / Int / Double ranges support for JSON
-version: 2.0.0
+version: 2.0.1
 #homepage: https://www.example.com
 #author: edlman <email@example.com>
 
 environment:
-  sdk: ">=2.2.2 <3.0.0"
+  sdk: ">=2.2.2 <2.20.0"
 
 dependencies:
   intl: ^0.16.1

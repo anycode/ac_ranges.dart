@@ -1,16 +1,14 @@
 part of ranges;
 
 class DateRange extends _Range<DateTime> {
-
-  DateRange(DateTime start, DateTime end, {bool startInclusive = true, bool endInclusive = false}) :
-        super(start == null ? null : DateTime.utc(start.year, start.month, start.day),
-          end == null ? null : DateTime.utc(end.year, end.month, end.day),
-          startInclusive, endInclusive, true);
+  DateRange(DateTime start, DateTime end, {bool startInclusive = true, bool endInclusive = false})
+      : super(start == null ? null : DateTime.utc(start.year, start.month, start.day),
+            end == null ? null : DateTime.utc(end.year, end.month, end.day), startInclusive, endInclusive, true);
 
   DateRange._() : super._(true);
 
   factory DateRange.parse(String input, {bool startInclusive, bool endInclusive}) {
-    if(input == null) return null;
+    if (input == null) return null;
     final DateRange dr = DateRange._();
     Match match;
     // date - date range
@@ -97,16 +95,17 @@ class DateRange extends _Range<DateTime> {
   ///   .then((_) => daterange.format("{{start}} - {{end}}", "E dd.MM.", locale: "cs_CZ");
   String format(String fmt, String dateFormat, {String locale, String inclusiveTag, String exclusiveTag}) {
     final DateFormat df = DateFormat(dateFormat, locale);
+    final DateTime s = start(inclusive: true);
+    final DateTime e = end(inclusive: true);
     String buffer = fmt
-        .replaceAll('{{start}}', _start == null ? '' : df.format(_start) +
+        .replaceAll('{{start}}', s == null ? '' : df.format(s) +
         (_startInclusive
           ? inclusiveTag != null ? inclusiveTag : ''
           : exclusiveTag != null ? exclusiveTag : ''))
-        .replaceAll('{{end}}', _end == null ? '' : df.format(_end) +
+        .replaceAll('{{end}}', e == null ? '' : df.format(e) +
         (_endInclusive
           ? inclusiveTag != null  ? inclusiveTag : ''
           : exclusiveTag != null ? exclusiveTag : ''));
     return buffer;
   }
-
 }
