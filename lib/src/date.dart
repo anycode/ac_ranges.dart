@@ -95,12 +95,14 @@ class DateRange extends _Range<DateTime> {
   ///   .then((_) => daterange.format("{{start}} - {{end}}", "E dd.MM.", locale: "cs_CZ");
   String format(String fmt, String dateFormat, {String? locale, String? inclusiveTag, String? exclusiveTag}) {
     final DateFormat df = DateFormat(dateFormat, locale);
+    final DateTime? s = start(inclusive: true);
+    final DateTime? e = end(inclusive: true);
     String buffer = fmt
         .replaceAll(
             '{{start}}',
-            _start == null
+            s == null
                 ? ''
-                : df.format(_start!) +
+                : df.format(s) +
                     (_startInclusive
                         ? inclusiveTag != null
                             ? inclusiveTag
@@ -110,9 +112,9 @@ class DateRange extends _Range<DateTime> {
                             : ''))
         .replaceAll(
             '{{end}}',
-            _end == null
+            e == null
                 ? ''
-                : df.format(_end!) +
+                : df.format(e) +
                     (_endInclusive
                         ? inclusiveTag != null
                             ? inclusiveTag

@@ -1,3 +1,4 @@
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:ranges/ranges.dart';
 import 'package:test/test.dart';
 
@@ -13,6 +14,15 @@ void main() {
       String b = drp.toString();
       print("string $a => DateRange.toString() => $b");
       expect(b, a);
+    });
+
+    test('format()', () async {
+      String a = "[2019-01-01,2019-02-10)";
+      final DateRange? drp = DateRange.parse(a);
+      await initializeDateFormatting("cs_CZ");
+      String? b = drp?.format("{{start}} - {{end}}", "E dd.MM.", locale: "cs_CZ");
+      print("string $a => format() => $b");
+      expect(b, 'út 01.01. - so 09.02.');
     });
 
     test('except', () {
