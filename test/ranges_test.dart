@@ -20,9 +20,21 @@ void main() {
       String a = "[2019-01-01,2019-02-10)";
       final DateRange? drp = DateRange.parse(a);
       await initializeDateFormatting("cs_CZ");
-      String? b = drp?.format("{{start}} - {{end}}", "E dd.MM.", locale: "cs_CZ");
-      print("string $a => format() => $b");
-      expect(b, 'út 01.01. - so 09.02.');
+      String? f0 = drp?.format('{{start}} - {{end}}', 'E d.M.y', locale: "cs_CZ");
+      String? f1 = drp?.format('{{start}} - {{end}}', 'E d.M.y', locale: "cs_CZ", startInclusive: false, endInclusive: false);
+      String? f2 = drp?.format('{{start}} - {{end}}', 'E d.M.y', locale: "cs_CZ", startInclusive: false, endInclusive: true);
+      String? f3 = drp?.format('{{start}} - {{end}}', 'E d.M.y', locale: "cs_CZ", startInclusive: true, endInclusive: false);
+      String? f4 = drp?.format('{{start}} - {{end}}', 'E d.M.y', locale: "cs_CZ", startInclusive: true, endInclusive: true);
+      print("string $a => DateRange.format(inclusive default) => $f0");
+      print("string $a => DateRange.format(inclusive f/f) => $f1");
+      print("string $a => DateRange.format(inclusive f/t) => $f2");
+      print("string $a => DateRange.format(inclusive t/f) => $f3`");
+      print("string $a => DateRange.format(inclusive t/t) => $f4`");
+      expect(f0, 'út 1.1.2019 - ne 10.2.2019');
+      expect(f1, 'po 31.12.2018 - ne 10.2.2019');
+      expect(f2, 'po 31.12.2018 - so 9.2.2019');
+      expect(f3, 'út 1.1.2019 - ne 10.2.2019');
+      expect(f4, 'út 1.1.2019 - so 9.2.2019');
     });
 
     test('except', () {
