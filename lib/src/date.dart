@@ -93,17 +93,18 @@ class DateRange extends _Range<DateTime> {
   ///  Init Date Formatting locale in caller's call before calling DateRange.format(), e.g.
   ///  initializeDateFormatting()
   ///   .then((_) => daterange.format("{{start}} - {{end}}", "E dd.MM.", locale: "cs_CZ");
-  String format(String fmt, String dateFormat, {String locale, String inclusiveTag, String exclusiveTag}) {
+  String format(String fmt, String dateFormat, {String locale, String inclusiveTag, String exclusiveTag,
+    bool startInclusive, bool endInclusive}) {
     final DateFormat df = DateFormat(dateFormat, locale);
-    final DateTime s = start(inclusive: true);
-    final DateTime e = end(inclusive: true);
+    final DateTime s = start(inclusive: startInclusive ?? _startInclusive);
+    final DateTime e = end(inclusive: endInclusive ?? _endInclusive);
     String buffer = fmt
         .replaceAll('{{start}}', s == null ? '' : df.format(s) +
-        (_startInclusive
+        (startInclusive ?? _startInclusive
           ? inclusiveTag != null ? inclusiveTag : ''
           : exclusiveTag != null ? exclusiveTag : ''))
         .replaceAll('{{end}}', e == null ? '' : df.format(e) +
-        (_endInclusive
+        (endInclusive ?? _endInclusive
           ? inclusiveTag != null  ? inclusiveTag : ''
           : exclusiveTag != null ? exclusiveTag : ''));
     return buffer;

@@ -5,9 +5,17 @@ void main() {
   String a = "[2019-01-01,2019-02-10)";
   final DateRange drp = DateRange.parse(a);
   String b = drp.toString();
-  String f = drp.format('{{start}} - {{end}}', 'E d.M.y');
+  String f0 = drp.format('{{start}} - {{end}}', 'E d.M.y');
+  String f1 = drp.format('{{start}} - {{end}}', 'E d.M.y', startInclusive: false, endInclusive: false);
+  String f2 = drp.format('{{start}} - {{end}}', 'E d.M.y', startInclusive: false, endInclusive: true);
+  String f3 = drp.format('{{start}} - {{end}}', 'E d.M.y', startInclusive: true, endInclusive: false);
+  String f4 = drp.format('{{start}} - {{end}}', 'E d.M.y', startInclusive: true, endInclusive: true);
   print("string $a => DateRange.toString() => $b");
-  print("string $a => DateRange.format() => $f");
+  print("string $a => DateRange.format(inclusive default) => $f0");
+  print("string $a => DateRange.format(inclusive f/f) => $f1");
+  print("string $a => DateRange.format(inclusive f/t) => $f2");
+  print("string $a => DateRange.format(inclusive t/f) => $f3`");
+  print("string $a => DateRange.format(inclusive t/t) => $f4`");
 
   final DateRange dre1 = DateRange(DateTime(2019, 12, 28), DateTime(2020, 04, 01));
   final DateRange dre2 = DateRange(DateTime(2019, 12, 28), DateTime(2020, 01, 04));
