@@ -1,8 +1,8 @@
-name: ranges
+name: ac_ranges
 description: Date / Int / Double ranges
 version: 3.0.8
-homepage: https://github.com/anycode/ranges.dart.git
-repository: https://github.com/anycode/ranges.dart.git
+homepage: https://github.com/anycode/ac_ranges.dart.git
+repository: https://github.com/anycode/ac_ranges.dart.git
 publish_to: 'none'
 
 environment:
