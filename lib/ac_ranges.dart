@@ -1,4 +1,4 @@
-library ac_ranges;
+library dev.anycode.dart.ranges;
 
 import 'dart:collection';
 
