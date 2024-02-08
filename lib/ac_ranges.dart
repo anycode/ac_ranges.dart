@@ -1,10 +1,10 @@
-library ranges;
+library ac_ranges;
 
 import 'dart:collection';
 
 import 'package:intl/intl.dart';
 
-export 'ranges.dart';
+export 'ac_ranges.dart';
 
 part 'src/date.dart';
 part 'src/double.dart';

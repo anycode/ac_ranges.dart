@@ -1,5 +1,5 @@
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:ranges/ranges.dart';
+import 'package:ac_ranges/ac_ranges.dart';
 import 'package:test/test.dart';
 
 void main() {

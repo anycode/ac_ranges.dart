@@ -1,4 +1,4 @@
-import 'package:ranges/ranges.dart';
+import 'package:ac_ranges/ac_ranges.dart';
 
 main() {
   final DateRange dr1 = DateRange(DateTime(2019, 01, 01), DateTime(2019, 02, 28));

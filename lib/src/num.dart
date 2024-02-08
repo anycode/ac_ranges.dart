@@ -1,4 +1,4 @@
-part of ranges;
+part of 'package:ac_ranges/ac_ranges.dart';
 
 abstract class _NumRange extends _Range<num> {
   // ignore: avoid_positional_boolean_parameters

@@ -1,4 +1,4 @@
-part of ranges;
+part of 'package:ac_ranges/ac_ranges.dart';
 
 class DoubleRange extends _NumRange {
   DoubleRange(double start, double end, {bool startInclusive = true, bool endInclusive = false})

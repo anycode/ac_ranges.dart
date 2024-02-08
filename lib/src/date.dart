@@ -1,4 +1,4 @@
-part of ranges;
+part of 'package:ac_ranges/ac_ranges.dart';
 
 class DateRange extends _Range<DateTime> {
   DateRange(DateTime? start, DateTime? end, {bool startInclusive = true, bool endInclusive = false})

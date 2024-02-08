@@ -1,4 +1,4 @@
-part of ranges;
+part of 'package:ac_ranges/ac_ranges.dart';
 
 abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> implements Comparable<_Range> {
   _Range(this._start, this._end, bool startInclusive, bool endInclusive, this._discrete)
@@ -232,7 +232,7 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
   static bool _adjacent<TYPE extends Comparable<TYPE>>(_Range<TYPE> a, _Range<TYPE> b) {
     return (a._end != null && b._start != null) &&
         ((a._endCmp(b._start, false) == 0 && (a._endInclusive || b._startInclusive)) ||
-            (a._discrete && b._startCmp(a._next(a._end!), false) == 0 && a._endInclusive && b._startInclusive));
+            (a._discrete && b._startCmp(a._next(a._end), false) == 0 && a._endInclusive && b._startInclusive));
   }
 
   bool _esAdjacent(_Range<TYPE> that) {
@@ -298,11 +298,13 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
 
   static List<_Range<TYPE>> _listExcept<TYPE extends Comparable<TYPE>>(List<_Range<TYPE>> source, List<_Range<TYPE>> exceptions) {
     List<_Range<TYPE>> ranges = [...source];
-    exceptions.forEach((_Range<TYPE> er) {
+    for (final er in exceptions) {
       final List<_Range<TYPE>> tmpRanges = [];
-      ranges.forEach((_Range<TYPE> sr) => tmpRanges.addAll(sr.except(er)));
+      for (final sr in ranges) {
+        tmpRanges.addAll(sr.except(er));
+      }
       ranges = tmpRanges;
-    });
+    }
     return ranges;
   }
 

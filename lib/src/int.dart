@@ -1,4 +1,4 @@
-part of ranges;
+part of 'package:ac_ranges/ac_ranges.dart';
 
 class IntRange extends _NumRange {
   IntRange(int start, int end, {bool startInclusive = true, bool endInclusive = false})
