@@ -15,8 +15,8 @@ class DateRange extends _Range<DateTime> {
     match = regexValVal.firstMatch(input);
     if (match != null) {
       dr._startInclusive = match.group(1) == "[";
-      dr._start = DateTime.parse(match.group(2)! + "T00:00:00Z");
-      dr._end = DateTime.parse(match.group(3)! + "T00:00:00Z");
+      dr._start = DateTime.parse("${match.group(2)!}T00:00:00Z");
+      dr._end = DateTime.parse("${match.group(3)!}T00:00:00Z");
       dr._endInclusive = match.group(4) == "]";
       dr._overrideInclusion(startInclusive, endInclusive);
       return dr;
@@ -35,7 +35,7 @@ class DateRange extends _Range<DateTime> {
     if (match != null) {
       dr._startInclusive = false; // infinity is always open
       dr._start = null;
-      dr._end = DateTime.parse(match.group(3)! + "T00:00:00Z");
+      dr._end = DateTime.parse("${match.group(3)!}T00:00:00Z");
       dr._endInclusive = match.group(4) == "]";
       dr._overrideInclusion(null, endInclusive);
       return dr;
@@ -44,7 +44,7 @@ class DateRange extends _Range<DateTime> {
     match = regexValInf.firstMatch(input);
     if (match != null) {
       dr._startInclusive = match.group(1) == "[";
-      dr._start = DateTime.parse(match.group(2)! + "T00:00:00Z");
+      dr._start = DateTime.parse("${match.group(2)!}T00:00:00Z");
       dr._end = null;
       dr._endInclusive = false; // infinity is always open
       dr._overrideInclusion(startInclusive, null);
@@ -105,24 +105,16 @@ class DateRange extends _Range<DateTime> {
                 ? ''
                 : df.format(s) +
                     (startInclusive ??_startInclusive
-                        ? inclusiveTag != null
-                            ? inclusiveTag
-                            : ''
-                        : exclusiveTag != null
-                            ? exclusiveTag
-                            : ''))
+                        ? inclusiveTag ?? ''
+                        : exclusiveTag ?? ''))
         .replaceAll(
             '{{end}}',
             e == null
                 ? ''
                 : df.format(e) +
                     (endInclusive ??_endInclusive
-                        ? inclusiveTag != null
-                            ? inclusiveTag
-                            : ''
-                        : exclusiveTag != null
-                            ? exclusiveTag
-                            : ''));
+                        ? inclusiveTag ?? ''
+                        : exclusiveTag ?? ''));
     return buffer;
   }
 }

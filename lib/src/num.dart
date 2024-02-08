@@ -8,6 +8,8 @@ abstract class _NumRange extends _Range<num> {
 
   @override
   String toString() {
-    return "${_startInclusive && _start != null ? "[" : "("}${_start == null ? '-infinity' : _start},${_end == null ? 'infinity' : _end}${_endInclusive && _end != null ? "]" : ")"}";
+    return "${_startInclusive && _start != null ? "[" : "("}"
+        "${_start ?? '-infinity'},${_end ?? 'infinity'}"
+        "${_endInclusive && _end != null ? "]" : ")"}";
   }
 }

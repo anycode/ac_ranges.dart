@@ -2,8 +2,8 @@ part of 'package:ac_ranges/ac_ranges.dart';
 
 abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> implements Comparable<_Range> {
   _Range(this._start, this._end, bool startInclusive, bool endInclusive, this._discrete)
-      : this._startInclusive = _start == null ? false : startInclusive,
-        this._endInclusive = _end == null ? false : endInclusive;
+      : _startInclusive = _start == null ? false : startInclusive,
+        _endInclusive = _end == null ? false : endInclusive;
 
   _Range._(this._discrete)
       : _startInclusive = true,
@@ -136,7 +136,7 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
   // ( E > As || E == As && A[ ) && ( E < Ae || E = Ae && A] )
   @override
   bool contains(Object? obj) {
-    if (!(obj is TYPE)) return false;
+    if (obj is! TYPE) return false;
     final int startCmp = _start?.compareTo(obj) ?? -1; // -infinity is less than any value
     final int endCmp = _end?.compareTo(obj) ?? 1; // infinity is greater than any value
     return (startCmp == -1 || startCmp == 0 && _startInclusive) && (endCmp == 1 || endCmp == 0 && _endInclusive);

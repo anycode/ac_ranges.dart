@@ -43,7 +43,9 @@ void main() {
       final DateRange dre3 = DateRange(DateTime(2020, 01, 06), DateTime(2020, 01, 11));
       final List<DateRange> drex1 = dre1.except(dre2).cast<DateRange>();
       final List<DateRange> drex2 = [];
-      drex1.forEach((DateRange x) => drex2.addAll(x.except(dre3).cast<DateRange>()));
+      for (var x in drex1) {
+        drex2.addAll(x.except(dre3).cast<DateRange>());
+      }
       print("$dre1 exclude $dre2 = $drex1");
       print("$dre1 exclude $dre2 exclude $dre3 = $drex2");
       expect(drex1, [DateRange(DateTime(2020,01,04), DateTime(2020,04,01))]);
