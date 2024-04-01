@@ -1,5 +1,5 @@
 # Changelog
 
-## 0.0.1
+## 3.0.8
 
-- Initial version, created by Stagehand
+- Generally available public release
