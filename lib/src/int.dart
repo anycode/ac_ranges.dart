@@ -1,11 +1,34 @@
 part of 'package:ac_ranges/ac_ranges.dart';
 
+/// Represents a range of integers.
+///
+/// This class allows defining a range with a start and end value,
+/// and whether the start and end are inclusive or exclusive.
 class IntRange extends _NumRange {
+  /// Creates a new [IntRange] with the specified [start] and [end] values.
+  ///
+  /// The [startInclusive] and [endInclusive] parameters determine whether the
+  /// start and end values are included in the range, respectively.
   IntRange(int start, int end, {bool startInclusive = true, bool endInclusive = false})
       : super(start, end, startInclusive, endInclusive, true);
 
+  /// Creates an empty [IntRange].
   IntRange._() : super._(true);
 
+  /// Parses a string representation of an integer range.
+  ///
+  /// The input string should be in one of the following formats:
+  /// - `[int,int]` (inclusive start and end)
+  /// - `[int,int)` (inclusive start, exclusive end)
+  /// - `(int,int]` (exclusive start, inclusive end)
+  /// - `(int,int)` (exclusive start and end)
+  /// - `(-infinity,infinity)` (open range from negative to positive infinity)
+  /// - `(-infinity,int]` (open range from negative infinity to int, inclusive)
+  /// - `(-infinity,int)` (open range from negative infinity to int, exclusive)
+  /// - `[int,infinity)` (open range from int, inclusive, to positive infinity)
+  /// - `(int,infinity)` (open range from int, exclusive, to positive infinity)
+  /// 
+  /// Returns a [IntRange] instance if the input is valid, otherwise returns null.
   static IntRange? parse(String? input, {bool? startInclusive, bool? endInclusive}) {
     if (input == null) return null;
     final IntRange ir = IntRange._();
@@ -54,26 +77,50 @@ class IntRange extends _NumRange {
 
   // valid ranges [] incusive, () exclusive
   // [int,int], [int,int), (int,int], (int,int)
+  /// Regular expression for a int number.
   static const String intRe = "[+-]?(0|[1-9][0-9]*)";
+  /// Regular expression for a range from negative to positive infinity.
   static RegExp regexInfInf = RegExp("([\\(\\[])\\s*(-infinity)\\s*,\\s*(infinity)\\s*([\\]\\)])");
+  /// Regular expression for a range from negative infinity to a int.
   static RegExp regexInfVal = RegExp("([\\(\\[])\\s*(-infinity)\\s*,\\s*($intRe)\\s*([\\]\\)])");
+  /// Regular expression for a range from a int to positive infinity.
   static RegExp regexValInf = RegExp("([\\(\\[])\\s*($intRe)\\s*,\\s*(infinity)\\s*([\\]\\)])");
+  /// Regular expression for a range between two ints.
   static RegExp regexValVal = RegExp("([\\(\\[])\\s*($intRe)\\s*,\\s*($intRe)\\s*([\\]\\)])");
 
+  /// Creates a new list of [intRange] instances by excluding ranges from a source list.
+  ///
+  /// The [source] list contains the original ranges, and the [exceptions] list contains the ranges to exclude.
+  /// Returns a new list of [intRange] instances representing the remaining ranges after exclusion.
   static List<IntRange> listExcept(List<IntRange> source, List<IntRange> exceptions) {
     return _Range._listExcept(source, exceptions).map((r) => r as IntRange).toList();
   }
 
+  /// Creates a new empty instance of the range.
+  ///
+  /// This method is used internally for operations that require creating a new range instance.
+  /// Returns a new empty [intRange] instance.
   @override
   _Range<num> newInstance() {
     return IntRange._();
   }
 
+  /// Returns the next value in the range.
+  ///
+  /// If the [value] is null, it returns null.
+  /// Otherwise, it returns the next integer value after the [value].
+  /// This method is used internally for iterating through the range.
+  /// Returns the next integer value or null.
   @override
   num? _next(num? value) {
     return value == null ? null : value + 1;
   }
 
+  /// Returns the previous value in the range.
+  ///
+  /// If the [value] is null, it returns null.
+  /// Otherwise, it returns the previous integer value before the [value].
+  /// This method is used internally for iterating through the range.
   @override
   num? _prev(num? value) {
     return value == null ? null : value - 1;

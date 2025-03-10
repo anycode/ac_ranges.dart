@@ -1,18 +1,38 @@
 part of 'package:ac_ranges/ac_ranges.dart';
 
+
 abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> implements Comparable<_Range> {
+  /// Creates a new range with the given start and end values and inclusion flags.
+  ///
+  /// [start] The start value of the range.
+  /// [end] The end value of the range.
+  /// [startInclusive] Whether the start value is included in the range.
+  /// [endInclusive] Whether the end value is included in the range.
+  /// [discrete] Whether the range is discrete (e.g., integers, dates).
   _Range(this._start, this._end, bool startInclusive, bool endInclusive, this._discrete)
       : _startInclusive = _start == null ? false : startInclusive,
         _endInclusive = _end == null ? false : endInclusive;
 
+  /// Creates a new range with default inclusion flags (both inclusive).
+  ///
+  /// [discrete] Whether the range is discrete (e.g., integers, dates).
   _Range._(this._discrete)
       : _startInclusive = true,
         _endInclusive = true;
 
+  /// Whether the start value is included in the range.
   bool _startInclusive;
+
+  /// The start value of the range.
   TYPE? _start;
+
+  /// The end value of the range.
   TYPE? _end;
+
+  /// Whether the end value is included in the range.
   bool _endInclusive;
+
+  /// Whether the range is discrete (e.g., integers, dates).
   final bool _discrete;
 
   _Range<TYPE> newInstance();
@@ -32,6 +52,12 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
   //
   //  5 |-----|    |-----|         this that, that this
 
+  /// Returns a list of ranges that represent the union of this range and another range.
+  ///
+  /// The union of two ranges is the set of all elements that are in either range.
+  ///
+  /// [that] The other range to union with.
+  /// Returns a list of ranges that represent the union of the two ranges.
   List<_Range<TYPE>> union(_Range<TYPE> that) {
     final List<_Range<TYPE>> result = [];
     if (isSupersetOf(that)) {
@@ -56,6 +82,12 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
     return result;
   }
 
+  /// Returns a list of ranges that represent the difference between this range and another range.
+  ///
+  /// The difference between two ranges is the set of all elements that are in this range but not in the other range.
+  ///
+  /// [that] The other range to subtract.
+  /// Returns a list of ranges that represent the difference between the two ranges.
   List<_Range<TYPE>> except(_Range<TYPE> that) {
     final List<_Range<TYPE>> result = [];
     //if (this.start < that.start && this.end > that.end) {
@@ -94,6 +126,12 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
     return result;
   }
 
+  /// Returns a range that represents the intersection of this range and another range.
+  ///
+  /// The intersection of two ranges is the set of all elements that are in both ranges.
+  ///
+  /// [that] The other range to intersect with.
+  /// Returns a range that represents the intersection of the two ranges, or null if the ranges do not intersect.
   _Range<TYPE>? intersect(_Range<TYPE> that) {
     _Range<TYPE>? result = newInstance();
     //if (this.start <= that.star && this.end >= that.end) {
@@ -127,13 +165,27 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
     2. strict (cannot equal)
        ( As > Bs || As = Bs && A( && B[ ) && (Ae < Be || Ae = Be && A) && B] )
    */
+  /// Returns whether this range is a subset of another range.
+  ///
+  /// [that] The other range to compare to.
+  /// [strict] Whether to consider strict subset (not equal).
+  /// Returns true if this range is a subset of the other range, false otherwise.
   bool isSubsetOf(_Range<TYPE> that, {bool strict = false}) =>
       !strict && _startGE(that) && _endLE(that) || strict && _startG(that) && _endL(that);
 
+  /// Returns whether this range is a superset of another range.
+  ///
+  /// [that] The other range to compare to.
+  /// [strict] Whether to consider strict superset (not equal).
+  /// Returns true if this range is a superset of the other range, false otherwise.
   bool isSupersetOf(_Range<TYPE> that, {bool strict = false}) => that.isSubsetOf(this, strict: strict);
 
   // A (this)  contains E (element) if
   // ( E > As || E == As && A[ ) && ( E < Ae || E = Ae && A] )
+  /// Returns whether this range contains another range.
+  ///
+  /// [that] The other range to check whether it's contained in this range.
+  /// Returns true if this range contains the other range, false otherwise.
   @override
   bool contains(Object? obj) {
     if (obj is! TYPE) return false;
@@ -142,22 +194,42 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
     return (startCmp == -1 || startCmp == 0 && _startInclusive) && (endCmp == 1 || endCmp == 0 && _endInclusive);
   }
 
+  /// Returns whether this range is adjacent to another range.
+  ///
+  /// [that] The other range to compare to.
+  /// Returns true if this range is adjacent to the other range, false otherwise.
   bool isAdjacentTo(_Range<TYPE> that) {
     return _seAdjacent(that) || _esAdjacent(that);
   }
 
+  /// Returns whether this range overlaps with another range.
+  ///
+  /// [that] The other range to compare to.
+  /// Returns true if this range overlaps with the other range, false otherwise.
   bool overlaps(_Range<TYPE> that) {
     return _seOverlap(that) || _esOverlap(that);
   }
 
+  /// Returns a list of ranges that represent the union of this range and another range.
+  ///
+  /// [that] The other range to union with.
+  /// Returns a list of ranges that represent the union of the two ranges.
   List<_Range<TYPE>> operator +(_Range<TYPE> that) => union(that);
 
+  /// Returns a list of ranges that represent the difference between this range and another range.
+  ///
+  /// [that] The other range to subtract.
+  /// Returns a list of ranges that represent the difference between the two ranges.
   List<_Range<TYPE>> operator -(_Range<TYPE> that) => except(that);
 
+  /// Returns a range that represents the intersection of this range and another range.
+  ///
+  /// [that] The other range to intersect with.
+  /// Returns a range that represents the intersection of the two ranges, or null if the ranges do not intersect.
   _Range<TYPE>? operator *(_Range<TYPE> that) => intersect(that);
 
   @override
-  bool operator ==(Object? that) => that is _Range<TYPE> && this.compareTo(that) == 0;
+  bool operator ==(Object that) => that is _Range<TYPE> && this.compareTo(that) == 0;
 
   int _startCmp(TYPE? other, [bool otherIsStart = true]) => _start != null && other != null
       // compare _start and other if both are not null,
@@ -281,13 +353,30 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
   TYPE? _next(TYPE? value);
   TYPE? _prev(TYPE? value);
 
-  // return start/end of range with possible inclusion override. For non discrete ranges return unmodified values
-  // see comments in void _overrideInclusion() for more
+  /// Returns the start value of the range, optionally with inclusion overridden.
+  ///
+  /// For non-discrete ranges, this returns the unmodified start value.
+  /// For discrete ranges, if [inclusive] is provided and differs from the current
+  /// start inclusion, the start value is adjusted to the next or previous value
+  /// accordingly.
+  ///
+  /// [inclusive] Optional. If provided, overrides the start inclusion.
+  /// Returns the start value of the range.
   TYPE? start({bool? inclusive}) => !_discrete || _start == null || inclusive == null || _startInclusive == inclusive
       ? _start
       : inclusive
           ? _next(_start)
           : _prev(_start);
+
+  /// Returns the end value of the range, optionally with inclusion overridden.
+  ///
+  /// For non-discrete ranges, this returns the unmodified end value.
+  /// For discrete ranges, if [inclusive] is provided and differs from the current
+  /// end inclusion, the end value is adjusted to the next or previous value
+  /// accordingly.
+  ///
+  /// [inclusive] Optional. If provided, overrides the end inclusion.
+  /// Returns the end value of the range.
   TYPE? end({bool? inclusive}) => !_discrete || _end == null || inclusive == null || _endInclusive == inclusive
       ? _end
       : inclusive
@@ -308,12 +397,20 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
     return ranges;
   }
 
+  /// Compares this range to another range.
+  ///
+  /// [other] The other range to compare to.
+  /// Returns a negative integer if this range is less than the other range,
+  /// zero if they are equal, and a positive integer if this range is greater
+  /// than the other range.
   @override
   int compareTo(_Range other) {
     int startCmp = _startCmp(other._start as TYPE);
     return startCmp != 0 ? startCmp : _endCmp(other._end as TYPE);
   }
 
+  /// Returns an iterator over the elements in this range.
+  /// Throws an exception if the range is not discrete or is infinite.
   @override
   Iterator<TYPE> get iterator => _discrete && _start != null && _end != null
       ? _RangeIterator<TYPE>(this)
@@ -323,6 +420,9 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
   int get hashCode => _start.hashCode ^ _end.hashCode ^ _startInclusive.hashCode ^ _endInclusive.hashCode;
 }
 
+/// An iterator over the elements in a discrete range.
+///
+/// [TYPE] The type of the elements in the range.
 class _RangeIterator<TYPE extends Comparable<TYPE>> implements Iterator<TYPE> {
   final _Range<TYPE> _range;
   TYPE _element;
