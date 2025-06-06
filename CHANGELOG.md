@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.11
+
+- Enhance equality comparison
+- Add tests for all types of ranges
+
 ## 3.0.10
 
 - Update `intl` package to 0.20

@@ -1,6 +1,6 @@
 name: ac_ranges
 description: Date / Int / Double ranges
-version: 3.0.10
+version: 3.0.11
 homepage: https://github.com/anycode/ac_ranges.dart.git
 repository: https://github.com/anycode/ac_ranges.dart.git
 publish_to: https://pub.anycode.dev
@@ -12,6 +12,6 @@ dependencies:
   intl: ^0.20.2
 
 dev_dependencies:
-  lints: ^5.0.0
-  test: ^1.25.2
+  lints: ^5.1.1
+  test: ^1.26.2
 
