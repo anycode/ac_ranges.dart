@@ -8,6 +8,12 @@ void main() {
       // Additional setup goes here.
     });
 
+    test('emptyRange()', () {
+      final infinite1Range = DateRange(null, null);
+      final infinite2Range = DateRange.parse('(-infinity,infinity)');
+      expect(infinite1Range, infinite2Range);
+    });
+
     test('toString()', () {
       String a = "[2019-01-01,2019-02-10)";
       final DateRange? drp = DateRange.parse(a);
@@ -101,10 +107,10 @@ void main() {
 
     test('adjacent', () {
       final DateRange dr3 = DateRange(DateTime(2019, 04, 01), DateTime(2019, 04, 28));
-      final DateRange dr4 = DateRange(DateTime(2019, 04, 01), DateTime(2019, 04, 8), endInclusive: true);
+      final DateRange dr4 = DateRange(DateTime(2019, 04, 01), DateTime(2019, 04, 08), endInclusive: true);
       final DateRange dr5 = DateRange(DateTime(2019, 04, 08), DateTime(2019, 05, 11));
       final DateRange dr6 = DateRange(DateTime(2019, 04, 09), DateTime(2019, 05, 11));
-      final DateRange dr7 = DateRange(DateTime(2019, 04, 01), DateTime(2019, 04, 8));
+      final DateRange dr7 = DateRange(DateTime(2019, 04, 01), DateTime(2019, 04, 08));
       final DateRange dr8 = DateRange(DateTime(2019, 04, 09), DateTime(2019, 05, 11), startInclusive: false);
 
       print("$dr3 adj $dr4 = ${dr3.isAdjacentTo(dr4)}");
