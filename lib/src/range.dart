@@ -231,65 +231,110 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
   @override
   bool operator ==(Object that) => that is _Range<TYPE> && this.compareTo(that) == 0;
 
-  int _startCmp(TYPE? other, [bool otherIsStart = true]) => _start != null && other != null
-      // compare _start and other if both are not null,
-      ? _start!.compareTo(other)
-      // check null values (-infinity) if other is start date
-      : otherIsStart
-          // if _start is null (= -infinity) it's always less,
-          // if other is null (= -infinity) _start is always greater,
-          // otherwise both are null (= -infinity) so they're equal
-          ? _start == null
-              ? -1
-              : other == null
-                  ? 1
-                  : 0
-          // other is end date and _start is null (-infinity) and/or other is null (+infinity)
-          // so start is always less than other
-          : -1;
+  int _startCmp(_Range<TYPE> other, [bool otherIsStart = true]) {
+    TYPE? thisVal = start();
+    TYPE? otherVal = otherIsStart ? other.start() : other.end();
+    if (! otherIsStart && (thisVal == null || otherVal == null)) {
+      // other is end date and thisVal is null (-infinity) and/or otherVal is null (+infinity)
+      // so thisVal is always less than otherVal
+      return -1;
+    } else if (thisVal == null && otherVal == null) {
+      // if both are null (= -infinity) so they're equal
+      return 0;
+    } else if (thisVal == null) {
+      // if thisVal is null (= -infinity) it's always less
+      return -1;
+    } else if (otherVal == null) {
+      // if otherVal is null (= -infinity), thisVal is always bigger
+      return 1;
+    } else {
+      // finally compare thisVal and otherVal (both are not null)
+      int cmp = thisVal.compareTo(otherVal);
+      // if both starts have different values, return the comparison result
+      if(cmp != 0) {
+        return cmp;
+      }
+      // otherwise check inclusions depending on `otherIsStart`
+      if(otherIsStart) {
+        // both values are start of ranges
+        if(_startInclusive == other._startInclusive) {
+          // same inclusion means equal
+          return 0;
+        } else {
+          // it this is inclusive (other exclusive), this is less
+          return _startInclusive ? -1 : 1;
+        }
+      } else {
+        // if start of this and end of other are inclusive, values are equal,
+        // otherwise start of this is always bigger than end of other
+        return _startInclusive && other._endInclusive ? 0 : 1;
+      }
+    }
+  }
 
   // ignore: unused_element
-  bool _startE(_Range<TYPE> that) => _startCmp(that._start) == 0 && _startInclusive == that._startInclusive;
+  bool _startE(_Range<TYPE> that) => _startCmp(that) == 0;
 
-  bool _startL(_Range<TYPE> that) =>
-      _startCmp(that._start) == -1 || _startCmp(that._start) == 0 && _startInclusive && !that._startInclusive;
+  bool _startL(_Range<TYPE> that) => _startCmp(that) == -1;
 
-  bool _startLE(_Range<TYPE> that) =>
-      _startCmp(that._start) == -1 || _startCmp(that._start) == 0 && (_startInclusive || !that._startInclusive);
+  bool _startLE(_Range<TYPE> that) => _startCmp(that) != 1;
 
-  bool _startG(_Range<TYPE> that) => _startCmp(that._start) == 1 || _startCmp(that._start) == 0 && that._startInclusive && !_startInclusive;
+  bool _startG(_Range<TYPE> that) => _startCmp(that) == 1;
 
-  bool _startGE(_Range<TYPE> that) =>
-      _startCmp(that._start) == 1 || _startCmp(that._start) == 0 && (that._startInclusive || !_startInclusive);
+  bool _startGE(_Range<TYPE> that) => _startCmp(that) != -1;
 
-  int _endCmp(TYPE? other, [bool otherIsEnd = true]) => _end != null && other != null
-      // compare _end and other if both are not null,
-      ? _end!.compareTo(other)
-      // check null values (+infinity) if other is end date
-      : otherIsEnd
-          // if _end is null (= +infinity) it's always greater,
-          // if other is null (= +infinity) _end is always less,
-          // otherwise both are null (= +infinity) so they're equal
-          ? _end == null
-              ? 1
-              : other == null
-                  ? -1
-                  : 0
-          // other is start date and _end is null (+infinity) and/or other is null (-infinity)
-          // so end is always grater than other
-          : 1;
+  int _endCmp(_Range<TYPE> other, [bool otherIsEnd = true]) {
+    TYPE? thisVal = end();
+    TYPE? otherVal = otherIsEnd ? other.end() : other.start();
+    if (! otherIsEnd && (thisVal == null || otherVal == null)) {
+      // other is start date and thisVal is null (infinity) and/or otherVal is null (-infinity)
+      // so thisVal is always bigger than otherVal
+      return 1;
+    } else if (thisVal == null && otherVal == null) {
+      // if both are null (= infinity) so they're equal
+      return 0;
+    } else if (thisVal == null) {
+      // if thisVal is null (= infinity) it's always bigger
+      return 1;
+    } else if (otherVal == null) {
+      // if otherVal is null (= infinity), thisVal is always less
+      return -1;
+    } else {
+      // finally compare thisVal and otherVal (both are not null)
+      int cmp = thisVal.compareTo(otherVal);
+      // if both ends have different values, return the comparison result
+      if(cmp != 0) {
+        return cmp;
+      }
+      // otherwise check inclusions depending on `otherIsEnd`
+      if(otherIsEnd) {
+        // both values are end of ranges
+        if(_endInclusive == other._endInclusive) {
+          // same inclusion means equal
+          return 0;
+        } else {
+          // it this is inclusive (other exclusive), this is bigger
+          return _endInclusive ? 1 : -1;
+        }
+      } else {
+        // if end of this and start of other are inclusive, values are equal,
+        // otherwise end of this is always less than start of other
+        return _endInclusive && other._startInclusive ? 0 : -1;
+      }
+    }
+  }
 
   // ignore: unused_element
-  bool _endE(_Range<TYPE> that) => _endCmp(that._end) == 0 && _endInclusive == that._endInclusive;
+  bool _endE(_Range<TYPE> that) => _endCmp(that) == 0;
 
-  bool _endL(_Range<TYPE> that) => _endCmp(that._end) == -1 || _endCmp(that._end) == 0 && that._endInclusive && !_endInclusive;
+  bool _endL(_Range<TYPE> that) => _endCmp(that) == -1;
 
-  bool _endLE(_Range<TYPE> that) => _endCmp(that._end) == -1 || _endCmp(that._end) == 0 && (that._endInclusive || !_endInclusive);
+  bool _endLE(_Range<TYPE> that) => _endCmp(that) != 1;
 
-  bool _endG(_Range<TYPE> that) => _endCmp(that._end) == 1 || _endCmp(that._end) == 0 && _endInclusive && !that._endInclusive;
+  bool _endG(_Range<TYPE> that) => _endCmp(that) == 1;
 
   // ignore: unused_element
-  bool _endGE(_Range<TYPE> that) => _endCmp(that._end) == 1 || _endCmp(that._end) == 0 && (_endInclusive || !that._endInclusive);
+  bool _endGE(_Range<TYPE> that) => _endCmp(that) != -1;
 
   // Adjacency
   // ranges A and B are adjacent if A.end and B.start are not null and
@@ -303,8 +348,8 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
   // doesn't consider reverse adjacency
   static bool _adjacent<TYPE extends Comparable<TYPE>>(_Range<TYPE> a, _Range<TYPE> b) {
     return (a._end != null && b._start != null) &&
-        ((a._endCmp(b._start, false) == 0 && (a._endInclusive || b._startInclusive)) ||
-            (a._discrete && b._startCmp(a._next(a._end), false) == 0 && a._endInclusive && b._startInclusive));
+        ((a._endCmp(b, false) == 0) ||
+            (a._discrete && a._next(a.end())!.compareTo(b.start()!) == 0 && a._endInclusive && b._startInclusive));
   }
 
   bool _esAdjacent(_Range<TYPE> that) {
@@ -321,8 +366,8 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
   // B      [-------]
   // doesn't consider reverse overlap
   static bool _overlap<TYPE extends Comparable<TYPE>>(_Range<TYPE> a, _Range<TYPE> b) {
-    return a._startLE(b) &&
-        (a._end!.compareTo(b._start!) == 1 || a._end!.compareTo(b._start!) == 0 && a._endInclusive && b._startInclusive);
+    final cmp = a._endCmp(b, false);
+    return a._startLE(b) && (cmp == 1 || cmp == 0 && a._endInclusive && b._startInclusive);
   }
 
   bool _esOverlap(_Range<TYPE> that) {
@@ -361,7 +406,6 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
   /// accordingly.
   ///
   /// [inclusive] Optional. If provided, overrides the start inclusion.
-  /// Returns the start value of the range.
   TYPE? start({bool? inclusive}) => !_discrete || _start == null || inclusive == null || _startInclusive == inclusive
       ? _start
       : inclusive
@@ -376,7 +420,6 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
   /// accordingly.
   ///
   /// [inclusive] Optional. If provided, overrides the end inclusion.
-  /// Returns the end value of the range.
   TYPE? end({bool? inclusive}) => !_discrete || _end == null || inclusive == null || _endInclusive == inclusive
       ? _end
       : inclusive
@@ -405,8 +448,8 @@ abstract class _Range<TYPE extends Comparable<TYPE>> with IterableMixin<TYPE> im
   /// than the other range.
   @override
   int compareTo(_Range other) {
-    int startCmp = _startCmp(other._start as TYPE);
-    return startCmp != 0 ? startCmp : _endCmp(other._end as TYPE);
+    int startCmp = _startCmp(other as _Range<TYPE>);
+    return startCmp != 0 ? startCmp : _endCmp(other);
   }
 
   /// Returns an iterator over the elements in this range.
