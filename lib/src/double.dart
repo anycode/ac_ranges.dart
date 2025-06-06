@@ -41,8 +41,8 @@ class DoubleRange extends _NumRange {
     if (match != null) {
       ir._startInclusive = match.group(1) == "[";
       ir._start = double.parse(match.group(2)!);
-      ir._end = double.parse(match.group(6)!);
-      ir._endInclusive = match.group(10) == "]";
+      ir._end = double.parse(match.group(3)!);
+      ir._endInclusive = match.group(4) == "]";
       return ir;
     }
     // -infinity - infinity range
@@ -59,8 +59,8 @@ class DoubleRange extends _NumRange {
     if (match != null) {
       ir._startInclusive = false;
       ir._start = null;
-      ir._end = double.parse(match.group(6)!);
-      ir._endInclusive = match.group(10) == "]";
+      ir._end = double.parse(match.group(3)!);
+      ir._endInclusive = match.group(4) == "]";
       return ir;
     }
     // double - infinity range
@@ -76,7 +76,7 @@ class DoubleRange extends _NumRange {
   }
 
   /// Regular expression for a double number.
-  static const String doubleRe = "[+-]?(0|[1-9][0-9]*)(\\.[0-9]+([eE][-+]?[0-9]+)?)?";
+  static const String doubleRe = "[+-]?(?:0|[1-9][0-9]*)(?:\\.[0-9]+(?:[eE][-+]?[0-9]+)?)?";
   /// Regular expression for a range from negative to positive infinity.
   static RegExp regexInfInf = RegExp("([\\(\\[])\\s*(-infinity)\\s*,\\s*(infinity)\\s*([\\]\\)])");
   /// Regular expression for a range from negative infinity to a double.

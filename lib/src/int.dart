@@ -38,8 +38,8 @@ class IntRange extends _NumRange {
     if (match != null) {
       ir._startInclusive = match.group(1) == "[";
       ir._start = int.parse(match.group(2)!);
-      ir._end = int.parse(match.group(4)!);
-      ir._endInclusive = match.group(6) == "]";
+      ir._end = int.parse(match.group(3)!);
+      ir._endInclusive = match.group(4) == "]";
       ir._overrideInclusion(startInclusive, endInclusive);
       return ir;
     }
@@ -57,7 +57,7 @@ class IntRange extends _NumRange {
     if (match != null) {
       ir._startInclusive = false; // infinity is always open
       ir._start = null;
-      ir._end = int.parse(match.group(4)!);
+      ir._end = int.parse(match.group(3)!);
       ir._endInclusive = match.group(4) == "]";
       ir._overrideInclusion(null, endInclusive);
       return ir;
@@ -78,7 +78,7 @@ class IntRange extends _NumRange {
   // valid ranges [] incusive, () exclusive
   // [int,int], [int,int), (int,int], (int,int)
   /// Regular expression for a int number.
-  static const String intRe = "[+-]?(0|[1-9][0-9]*)";
+  static const String intRe = "[+-]?(?:0|[1-9][0-9]*)";
   /// Regular expression for a range from negative to positive infinity.
   static RegExp regexInfInf = RegExp("([\\(\\[])\\s*(-infinity)\\s*,\\s*(infinity)\\s*([\\]\\)])");
   /// Regular expression for a range from negative infinity to a int.
