@@ -1,22 +1,24 @@
 part of 'package:ac_ranges/ac_ranges.dart';
 
+// MUST use _Range<num>, not _Range<double> as double is not Comparable<double> but Comparable<num>
+
 /// Represents a range of double values.
 ///
 /// This class allows defining a range with a start and end value,
 /// and whether the start and end are inclusive or exclusive.
-class DoubleRange extends _NumRange {
+class DoubleRange extends _Range<num> {
   /// Creates a new [DoubleRange] instance.
   ///
   /// The [start] and [end] parameters define the range's boundaries.
   /// [startInclusive] determines if the start value is included in the range (defaults to true).
   /// [endInclusive] determines if the end value is included in the range (defaults to false).
   DoubleRange(double start, double end, {bool startInclusive = true, bool endInclusive = false})
-      : super(start, end, startInclusive, endInclusive, false);
+      : super(start, end, startInclusive, endInclusive);
 
   /// Creates a new empty [DoubleRange] instance.
   ///
   /// This constructor is used internally for parsing.
-  DoubleRange._() : super._(false);
+  DoubleRange._() : super._();
 
   /// Parses a string representation of a double range.
   ///
@@ -101,25 +103,4 @@ class DoubleRange extends _NumRange {
     return DoubleRange._();
   }
 
-  /// Returns the next value in the range.
-  ///
-  /// For double ranges, there is no concept of a "next" value, so this method simply returns the input value.
-  /// Returns the input [value].
-  ///
-  /// [value] - The current value.
-  @override
-  num? _next(num? value) {
-    return value;
-  }
-
-  /// Returns the previous value in the range.
-  ///
-  /// For double ranges, there is no concept of a "previous" value, so this method simply returns the input value.
-  /// Returns the input [value].
-  ///
-  /// [value] - The current value.
-  @override
-  num? _prev(num? value) {
-    return value;
-  }
 }

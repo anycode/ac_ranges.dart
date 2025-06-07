@@ -5,7 +5,7 @@ part of 'package:ac_ranges/ac_ranges.dart';
 /// This class extends [_Range] and provides specific functionality for
 /// working with date ranges. It supports inclusive and exclusive boundaries,
 /// parsing from string representations, and formatting date ranges.
-class DateRange extends _Range<DateTime> {
+class DateRange extends _DiscreteRange<DateTime> {
   /// Creates a new [DateRange] instance.
   ///
   /// The [start] and [end] parameters define the boundaries of the range.
@@ -17,9 +17,9 @@ class DateRange extends _Range<DateTime> {
   /// The time part of the start and end dates is ignored, and only the date part is considered.
   DateRange(DateTime? start, DateTime? end, {bool startInclusive = true, bool endInclusive = false})
       : super(start == null ? null : DateTime.utc(start.year, start.month, start.day),
-            end == null ? null : DateTime.utc(end.year, end.month, end.day), startInclusive, endInclusive, true);
+            end == null ? null : DateTime.utc(end.year, end.month, end.day), startInclusive, endInclusive);
 
-  DateRange._() : super._(true);
+  DateRange._() : super._();
 
   /// Parses a string representation of a date range.
   ///
@@ -128,7 +128,7 @@ class DateRange extends _Range<DateTime> {
   ///
   /// This method is used internally by the [_Range] class to create new instances of the same type.
   @override
-  _Range<DateTime> newInstance() {
+  _DiscreteRange<DateTime> newInstance() {
     return DateRange._();
   }
 

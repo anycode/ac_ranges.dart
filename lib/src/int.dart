@@ -1,19 +1,21 @@
 part of 'package:ac_ranges/ac_ranges.dart';
 
+// MUST use _DiscreteRange<num>, not _DiscreteRange<int> as int is not Comparable<int> but Comparable<num>
+
 /// Represents a range of integers.
 ///
 /// This class allows defining a range with a start and end value,
 /// and whether the start and end are inclusive or exclusive.
-class IntRange extends _NumRange {
+class IntRange extends _DiscreteRange<num> {
   /// Creates a new [IntRange] with the specified [start] and [end] values.
   ///
   /// The [startInclusive] and [endInclusive] parameters determine whether the
   /// start and end values are included in the range, respectively.
   IntRange(int start, int end, {bool startInclusive = true, bool endInclusive = false})
-      : super(start, end, startInclusive, endInclusive, true);
+      : super(start, end, startInclusive, endInclusive);
 
   /// Creates an empty [IntRange].
-  IntRange._() : super._(true);
+  IntRange._() : super._();
 
   /// Parses a string representation of an integer range.
   ///
@@ -99,7 +101,7 @@ class IntRange extends _NumRange {
   /// This method is used internally for operations that require creating a new range instance.
   /// Returns a new empty [intRange] instance.
   @override
-  _Range<num> newInstance() {
+  _DiscreteRange<num> newInstance() {
     return IntRange._();
   }
 
