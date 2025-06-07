@@ -21,15 +21,13 @@ class DoubleRange extends _NumRange {
   /// Parses a string representation of a double range.
   ///
   /// The input string should be in one of the following formats:
-  /// - `[double,double]` (inclusive start and end)
-  /// - `[double,double)` (inclusive start, exclusive end)
-  /// - `(double,double]` (exclusive start, inclusive end)
-  /// - `(double,double)` (exclusive start and end)
-  /// - `(-infinity,infinity)` (open range from negative to positive infinity)
-  /// - `(-infinity,double]` (open range from negative infinity to double, inclusive)
-  /// - `(-infinity,double)` (open range from negative infinity to double, exclusive)
-  /// - `[double,infinity)` (open range from double, inclusive, to positive infinity)
-  /// - `(double,infinity)` (open range from double, exclusive, to positive infinity)
+  /// * _&lbrack;double,double&rbrack;_ (inclusive start and end)
+  /// * _&lbrack;double,double)_ (inclusive start, exclusive end)
+  /// * _(double,double&rbrack;_ (exclusive start, inclusive end)
+  /// * _(double,double)_ (exclusive start and end)
+  /// * _(-infinity,infinity)_ (open range)
+  /// * _(-infinity,double&rbrack;_ or _(-infinity,double)_ (open start, inclusive/exclusive end)
+  /// * _&lbrack;double,infinity)_ or _(double,infinity)_ (inclusive/exclusive start, open end)
   ///
   /// Returns a [DoubleRange] instance if the input is valid, otherwise returns null.
   static DoubleRange? parse(String? input) {

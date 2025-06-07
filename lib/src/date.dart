@@ -24,13 +24,14 @@ class DateRange extends _Range<DateTime> {
   /// Parses a string representation of a date range.
   ///
   /// The [input] string should be in one of the following formats:
-  /// - `[date,date]` (inclusive start and end)
-  /// - `[date,date)` (inclusive start, exclusive end)
-  /// - `(date,date]` (exclusive start, inclusive end)
-  /// - `(date,date)` (exclusive start and end)
-  /// - `(-infinity,infinity)` (open range)
-  /// - `(-infinity,date]` or `(-infinity,date)` (open start, inclusive/exclusive end)
-  /// - `[date,infinity)` or `(date,infinity)` (inclusive/exclusive start, open end)
+  ///
+  /// * _&lbrack;date,date&rbrack;_ (inclusive start and end)
+  /// * _&lbrack;date,date)_ (inclusive start, exclusive end)
+  /// * _(date,date&rbrack;_ (exclusive start, inclusive end)
+  /// * _(date,date)_ (exclusive start and end)
+  /// * _(-infinity,infinity)_ (open range)
+  /// * _(-infinity,date&rbrack;_ or _(-infinity,date)_ (open start, inclusive/exclusive end)
+  /// * _&lbrack;date,infinity)_ or _(date,infinity)_ (inclusive/exclusive start, open end)
   ///
   /// The [startInclusive] and [endInclusive] parameters can be used to override the inclusivity of the start and end dates.
   /// If not provided, the inclusivity is determined from the input string.
@@ -115,8 +116,8 @@ class DateRange extends _Range<DateTime> {
 
   /// Returns a string representation of the date range.
   ///
-  /// The format is `[start,end]` for inclusive start and end, `[start,end)` for inclusive start and exclusive end,
-  /// `(start,end]` for exclusive start and inclusive end, and `(start,end)` for exclusive start and end.
+  /// The format is _&lbrack;start,end&rbrack;_ for inclusive start and end, _&lbrack;start,end)_ for inclusive start and exclusive end,
+  /// _(start,end&rbrack;_ for exclusive start and inclusive end, and _(start,end)_ for exclusive start and end.
   @override
   String toString() {
     final DateFormat df = DateFormat('yyyy-MM-dd');
@@ -167,13 +168,10 @@ class DateRange extends _Range<DateTime> {
   /// ```dart
   /// DateRange(DateTime(2023, 1, 1), DateTime(2023, 1, 3), startInclusive: true, endInclusive: false)
   ///   .format("Range: {{start}} - {{end}}", "dd.MM.yyyy", inclusiveTag: "[", exclusiveTag: ")");
-  /// // Output: "Range: 01.01.2023[ - 03.01.2023)"
+  /// // Output: "Range: [01.01.2023 - 03.01.2023)"
   /// ```
   ///
   /// Note: initializeDateFormatting() should be called before using this method.
-  /// DO NOT CALL initializeDateFormatting() HERE!!!!
-  ///  initializeDateFormatting() is an async call (Future) and can cause troubles in AngularDart (AD)
-  ///  as it causes a change to be detected and AD will loop forever
   ///
   ///  Init Date Formatting locale in caller's call before calling DateRange.format(), e.g.
   ///  ```dart

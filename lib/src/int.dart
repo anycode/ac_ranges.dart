@@ -18,15 +18,13 @@ class IntRange extends _NumRange {
   /// Parses a string representation of an integer range.
   ///
   /// The input string should be in one of the following formats:
-  /// - `[int,int]` (inclusive start and end)
-  /// - `[int,int)` (inclusive start, exclusive end)
-  /// - `(int,int]` (exclusive start, inclusive end)
-  /// - `(int,int)` (exclusive start and end)
-  /// - `(-infinity,infinity)` (open range from negative to positive infinity)
-  /// - `(-infinity,int]` (open range from negative infinity to int, inclusive)
-  /// - `(-infinity,int)` (open range from negative infinity to int, exclusive)
-  /// - `[int,infinity)` (open range from int, inclusive, to positive infinity)
-  /// - `(int,infinity)` (open range from int, exclusive, to positive infinity)
+  /// * _&lbrack;int,int&rbrack;_ (inclusive start and end)
+  /// * _&lbrack;int,int)_ (inclusive start, exclusive end)
+  /// * _(int,int&rbrack;_ (exclusive start, inclusive end)
+  /// * _(int,int)_ (exclusive start and end)
+  /// * _(-infinity,infinity)_ (open range)
+  /// * _(-infinity,int&rbrack;_ or _(-infinity,int)_ (open start, inclusive/exclusive end)
+  /// * _&lbrack;int,infinity)_ or _(int,infinity)_ (inclusive/exclusive start, open end)
   /// 
   /// Returns a [IntRange] instance if the input is valid, otherwise returns null.
   static IntRange? parse(String? input, {bool? startInclusive, bool? endInclusive}) {
