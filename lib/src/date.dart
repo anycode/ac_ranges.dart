@@ -1,11 +1,27 @@
+/*
+ * Copyright 2025 Martin Edlman - Anycode <ac@anycode.dev>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 part of 'package:ac_ranges/ac_ranges.dart';
 
 /// Represents a range of dates.
 ///
-/// This class extends [_Range] and provides specific functionality for
+/// This class extends [Range] and provides specific functionality for
 /// working with date ranges. It supports inclusive and exclusive boundaries,
 /// parsing from string representations, and formatting date ranges.
-class DateRange extends _DiscreteRange<DateTime> {
+class DateRange extends DiscreteRange<DateTime> {
   /// Creates a new [DateRange] instance.
   ///
   /// The [start] and [end] parameters define the boundaries of the range.
@@ -47,7 +63,7 @@ class DateRange extends _DiscreteRange<DateTime> {
   ///
   /// Returns a [DateRange] object representing the parsed date range, or null if the input string is invalid.
   static DateRange? parse(String? input, {bool? startInclusive, bool? endInclusive}) {
-    final range = _DiscreteRange._parse<DateTime>(input,
+    final range = DiscreteRange._parse<DateTime>(input,
         regexInfInf: regexInfInf,
         regexInfVal: regexInfVal,
         regexValInf: regexValInf,
@@ -62,13 +78,13 @@ class DateRange extends _DiscreteRange<DateTime> {
   /// Regular expression for a date.
   static const String valRe = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
   /// Regular expression for a range from negative to positive infinity.
-  static RegExp regexInfInf = _Range._createRegex('-infinity', 'infinity');
+  static RegExp regexInfInf = Range._createRegex('-infinity', 'infinity');
   /// Regular expression for a range from negative infinity to a date.
-  static RegExp regexInfVal = _Range._createRegex('-infinity', valRe);
+  static RegExp regexInfVal = Range._createRegex('-infinity', valRe);
   /// Regular expression for a range from a date to positive infinity.
-  static RegExp regexValInf = _Range._createRegex(valRe, 'infinity');
+  static RegExp regexValInf = Range._createRegex(valRe, 'infinity');
   /// Regular expression for a range between two dates.
-  static RegExp regexValVal = _Range._createRegex(valRe, valRe);
+  static RegExp regexValVal = Range._createRegex(valRe, valRe);
 
   /// Returns a list of [DateRange] objects that represent the difference between the [source] and [exceptions] lists.
   ///
@@ -78,7 +94,7 @@ class DateRange extends _DiscreteRange<DateTime> {
   /// [exceptions] The list of [DateRange] objects to subtract.
   /// Returns a new list of [DateRange] objects representing the difference.
   static List<DateRange> listExcept(List<DateRange> source, List<DateRange> exceptions) {
-    return _Range._listExcept(source, exceptions).map((r) => r as DateRange).toList();
+    return Range._listExcept(source, exceptions).map((r) => r as DateRange).toList();
   }
 
   /// Returns a string representation of the date range.
@@ -93,7 +109,7 @@ class DateRange extends _DiscreteRange<DateTime> {
 
   /// Creates a new instance of [DateRange].
   ///
-  /// This method is used internally by the [_Range] class to create new instances of the same type.
+  /// This method is used internally by the [Range] class to create new instances of the same type.
   @override
   DateRange newInstance() => DateRange._();
 
