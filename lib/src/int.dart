@@ -1,3 +1,19 @@
+/*
+ * Copyright 2025 Martin Edlman - Anycode <ac@anycode.dev>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 part of 'package:ac_ranges/ac_ranges.dart';
 
 // MUST use _DiscreteRange<num>, not _DiscreteRange<int> as int is not Comparable<int> but Comparable<num>
@@ -6,7 +22,7 @@ part of 'package:ac_ranges/ac_ranges.dart';
 ///
 /// This class allows defining a range with a start and end value,
 /// and whether the start and end are inclusive or exclusive.
-class IntRange extends _DiscreteRange<num> {
+class IntRange extends DiscreteRange<num> {
   /// Creates a new [IntRange] with the specified [start] and [end] values.
   ///
   /// The [startInclusive] and [endInclusive] parameters determine whether the
@@ -30,7 +46,7 @@ class IntRange extends _DiscreteRange<num> {
   /// 
   /// Returns a [IntRange] instance if the input is valid, otherwise returns null.
   static IntRange? parse(String? input, {bool? startInclusive, bool? endInclusive}) {
-    final range = _DiscreteRange._parse<num>(input,
+    final range = DiscreteRange._parse<num>(input,
         regexInfInf: regexInfInf,
         regexInfVal: regexInfVal,
         regexValInf: regexValInf,
@@ -47,20 +63,20 @@ class IntRange extends _DiscreteRange<num> {
   /// Regular expression for a int number.
   static const String valRe = "[+-]?(?:0|[1-9][0-9]*)";
   /// Regular expression for a range from negative to positive infinity.
-  static RegExp regexInfInf = _Range._createRegex('-infinity', 'infinity');
+  static RegExp regexInfInf = Range._createRegex('-infinity', 'infinity');
   /// Regular expression for a range from negative infinity to a int.
-  static RegExp regexInfVal = _Range._createRegex('-infinity', valRe);
+  static RegExp regexInfVal = Range._createRegex('-infinity', valRe);
   /// Regular expression for a range from a int to positive infinity.
-  static RegExp regexValInf = _Range._createRegex(valRe, 'infinity');
+  static RegExp regexValInf = Range._createRegex(valRe, 'infinity');
   /// Regular expression for a range between two ints.
-  static RegExp regexValVal = _Range._createRegex(valRe, valRe);
+  static RegExp regexValVal = Range._createRegex(valRe, valRe);
 
   /// Creates a new list of [intRange] instances by excluding ranges from a source list.
   ///
   /// The [source] list contains the original ranges, and the [exceptions] list contains the ranges to exclude.
   /// Returns a new list of [intRange] instances representing the remaining ranges after exclusion.
   static List<IntRange> listExcept(List<IntRange> source, List<IntRange> exceptions) {
-    return _Range._listExcept(source, exceptions).map((r) => r as IntRange).toList();
+    return Range._listExcept(source, exceptions).map((r) => r as IntRange).toList();
   }
 
   /// Creates a new empty instance of the range.

@@ -1,7 +1,22 @@
+/*
+ * Copyright 2025 Martin Edlman - Anycode <ac@anycode.dev>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 part of 'package:ac_ranges/ac_ranges.dart';
 
-
-abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Range> {
+abstract class Range<TYPE extends Comparable<TYPE>> implements Comparable<Range> {
 
   /// Creates a new range with the given start and end values and inclusion flags.
   ///
@@ -9,12 +24,12 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
   /// [end] The end value of the range.
   /// [startInclusive] Whether the start value is included in the range.
   /// [endInclusive] Whether the end value is included in the range.
-  _Range(this._start, this._end, bool startInclusive, bool endInclusive)
+  Range(this._start, this._end, bool startInclusive, bool endInclusive)
       : _startInclusive = _start == null ? false : startInclusive,
         _endInclusive = _end == null ? false : endInclusive;
 
   /// Creates a new range with default inclusion flags (both inclusive).
-  _Range._()
+  Range._()
       : _startInclusive = true,
         _endInclusive = true;
 
@@ -30,7 +45,7 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
   /// Whether the end value is included in the range.
   bool _endInclusive;
 
-  _Range<TYPE> newInstance();
+  Range<TYPE> newInstance();
 
   @override
   String toString() => _toString();
@@ -62,8 +77,8 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
   /// [that] The other range to union with.
   ///
   /// Returns a list of ranges that represent the union of the two ranges.
-  List<_Range<TYPE>> union(_Range<TYPE> that) {
-    final List<_Range<TYPE>> result = [];
+  List<Range<TYPE>> union(Range<TYPE> that) {
+    final List<Range<TYPE>> result = [];
     if (isSupersetOf(that)) {
       result.add(this);
     } else if (isSubsetOf(that)) {
@@ -91,8 +106,8 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
   /// [that] The other range to subtract.
   ///
   /// Returns a list of ranges that represent the difference between the two ranges.
-  List<_Range<TYPE>> except(_Range<TYPE> that) {
-    final List<_Range<TYPE>> result = [];
+  List<Range<TYPE>> except(Range<TYPE> that) {
+    final List<Range<TYPE>> result = [];
     //if (this.start < that.start && this.end > that.end) {
     if (isSupersetOf(that)) {
       if (_startL(that)) {
@@ -134,8 +149,8 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
   /// [that] The other range to intersect with.
   ///
   /// Returns a range that represents the intersection of the two ranges, or null if the ranges do not intersect.
-  _Range<TYPE>? intersect(_Range<TYPE> that) {
-    _Range<TYPE>? result = newInstance();
+  Range<TYPE>? intersect(Range<TYPE> that) {
+    Range<TYPE>? result = newInstance();
     //if (this.start <= that.star && this.end >= that.end) {
     if (isSupersetOf(that)) {
       result = that;
@@ -173,7 +188,7 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
   /// [strict] Whether to consider strict subset (not equal).
   ///
   /// Returns true if this range is a subset of the other range, false otherwise.
-  bool isSubsetOf(_Range<TYPE> that, {bool strict = false}) =>
+  bool isSubsetOf(Range<TYPE> that, {bool strict = false}) =>
       !strict && _startGE(that) && _endLE(that) || strict && _startG(that) && _endL(that);
 
   /// Evaluate whether this range is a superset of another.
@@ -182,7 +197,7 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
   /// [strict] Whether to consider strict superset (not equal).
   ///
   /// Returns true if this range is a superset of the other range, false otherwise.
-  bool isSupersetOf(_Range<TYPE> that, {bool strict = false}) => that.isSubsetOf(this, strict: strict);
+  bool isSupersetOf(Range<TYPE> that, {bool strict = false}) => that.isSubsetOf(this, strict: strict);
 
   // A (this)  contains E (element) if
   // ( E > As || E == As && A[ ) && ( E < Ae || E = Ae && A] )
@@ -210,7 +225,7 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
   /// [that] The other range to compare to.
   ///
   /// Returns true if this range is adjacent to the other range, false otherwise.
-  bool isAdjacentTo(_Range<TYPE> that) {
+  bool isAdjacentTo(Range<TYPE> that) {
     return _seAdjacent(that) || _esAdjacent(that);
   }
 
@@ -219,7 +234,7 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
   /// [that] The other range to compare to.
   ///
   /// Returns true if this range overlaps with the other range, false otherwise.
-  bool overlaps(_Range<TYPE> that) {
+  bool overlaps(Range<TYPE> that) {
     return _seOverlap(that) || _esOverlap(that);
   }
 
@@ -228,21 +243,21 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
   /// [that] The other range to union with.
   ///
   /// Returns a list of ranges that represent the union of the two ranges.
-  List<_Range<TYPE>> operator +(_Range<TYPE> that) => union(that);
+  List<Range<TYPE>> operator +(Range<TYPE> that) => union(that);
 
   /// Operator for the difference between this range and another range.
   ///
   /// [that] The other range to subtract.
   ///
   /// Returns a list of ranges that represent the difference between the two ranges.
-  List<_Range<TYPE>> operator -(_Range<TYPE> that) => except(that);
+  List<Range<TYPE>> operator -(Range<TYPE> that) => except(that);
 
   /// Operator for the intersection of this range and another range.
   ///
   /// [that] The other range to intersect with.
   ///
   /// Returns a range that represents the intersection of the two ranges, or null if the ranges do not intersect.
-  _Range<TYPE>? operator *(_Range<TYPE> that) => intersect(that);
+  Range<TYPE>? operator *(Range<TYPE> that) => intersect(that);
 
   /// Ranges are equal if they have same start and end dates and inclusions.
   ///
@@ -255,9 +270,9 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
   /// IntRange.parse('[2,10]') == IntRange(2,10, endInclusive: true);
   /// ```
   @override
-  bool operator ==(Object that) => that is _Range<TYPE> && this.compareTo(that) == 0;
+  bool operator ==(Object that) => that is Range<TYPE> && this.compareTo(that) == 0;
 
-  int _startCmp(_Range<TYPE> other, [bool otherIsStart = true]) {
+  int _startCmp(Range<TYPE> other, [bool otherIsStart = true]) {
     TYPE? thisVal = start();
     TYPE? otherVal = otherIsStart ? other.start() : other.end();
     if (! otherIsStart && (thisVal == null || otherVal == null)) {
@@ -299,17 +314,17 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
   }
 
   // ignore: unused_element
-  bool _startE(_Range<TYPE> that) => _startCmp(that) == 0;
+  bool _startE(Range<TYPE> that) => _startCmp(that) == 0;
 
-  bool _startL(_Range<TYPE> that) => _startCmp(that) == -1;
+  bool _startL(Range<TYPE> that) => _startCmp(that) == -1;
 
-  bool _startLE(_Range<TYPE> that) => _startCmp(that) != 1;
+  bool _startLE(Range<TYPE> that) => _startCmp(that) != 1;
 
-  bool _startG(_Range<TYPE> that) => _startCmp(that) == 1;
+  bool _startG(Range<TYPE> that) => _startCmp(that) == 1;
 
-  bool _startGE(_Range<TYPE> that) => _startCmp(that) != -1;
+  bool _startGE(Range<TYPE> that) => _startCmp(that) != -1;
 
-  int _endCmp(_Range<TYPE> other, [bool otherIsEnd = true]) {
+  int _endCmp(Range<TYPE> other, [bool otherIsEnd = true]) {
     TYPE? thisVal = end();
     TYPE? otherVal = otherIsEnd ? other.end() : other.start();
     if (! otherIsEnd && (thisVal == null || otherVal == null)) {
@@ -351,16 +366,16 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
   }
 
   // ignore: unused_element
-  bool _endE(_Range<TYPE> that) => _endCmp(that) == 0;
+  bool _endE(Range<TYPE> that) => _endCmp(that) == 0;
 
-  bool _endL(_Range<TYPE> that) => _endCmp(that) == -1;
+  bool _endL(Range<TYPE> that) => _endCmp(that) == -1;
 
-  bool _endLE(_Range<TYPE> that) => _endCmp(that) != 1;
+  bool _endLE(Range<TYPE> that) => _endCmp(that) != 1;
 
-  bool _endG(_Range<TYPE> that) => _endCmp(that) == 1;
+  bool _endG(Range<TYPE> that) => _endCmp(that) == 1;
 
   // ignore: unused_element
-  bool _endGE(_Range<TYPE> that) => _endCmp(that) != -1;
+  bool _endGE(Range<TYPE> that) => _endCmp(that) != -1;
 
   // Adjacency
   // ranges A and B are adjacent if A.end and B.start are not null and
@@ -370,15 +385,15 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
   // A---)[---B OK
   // A---)(---B NOK
   // doesn't consider reverse adjacency
-  static bool _adjacent<TYPE extends Comparable<TYPE>>(_Range<TYPE> a, _Range<TYPE> b) {
+  static bool _adjacent<TYPE extends Comparable<TYPE>>(Range<TYPE> a, Range<TYPE> b) {
     return a._end != null && b._start != null && a._endCmp(b, false) == 0;
   }
 
-  bool _esAdjacent(_Range<TYPE> that) {
+  bool _esAdjacent(Range<TYPE> that) {
     return _adjacent(this, that);
   }
 
-  bool _seAdjacent(_Range<TYPE> that) {
+  bool _seAdjacent(Range<TYPE> that) {
     return _adjacent(that, this);
   }
 
@@ -387,16 +402,16 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
   // A [-------]
   // B      [-------]
   // doesn't consider reverse overlap
-  static bool _overlap<TYPE extends Comparable<TYPE>>(_Range<TYPE> a, _Range<TYPE> b) {
+  static bool _overlap<TYPE extends Comparable<TYPE>>(Range<TYPE> a, Range<TYPE> b) {
     final cmp = a._endCmp(b, false);
     return a._startLE(b) && (cmp == 1 || cmp == 0 && a._endInclusive && b._startInclusive);
   }
 
-  bool _esOverlap(_Range<TYPE> that) {
+  bool _esOverlap(Range<TYPE> that) {
     return _overlap(this, that);
   }
 
-  bool _seOverlap(_Range<TYPE> that) {
+  bool _seOverlap(Range<TYPE> that) {
     return _overlap(that, this);
   }
 
@@ -409,10 +424,10 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
   bool get startInclusive => _startInclusive;
   bool get endInclusive => _endInclusive;
 
-  static List<_Range<TYPE>> _listExcept<TYPE extends Comparable<TYPE>>(List<_Range<TYPE>> source, List<_Range<TYPE>> exceptions) {
-    List<_Range<TYPE>> ranges = [...source];
+  static List<Range<TYPE>> _listExcept<TYPE extends Comparable<TYPE>>(List<Range<TYPE>> source, List<Range<TYPE>> exceptions) {
+    List<Range<TYPE>> ranges = [...source];
     for (final er in exceptions) {
-      final List<_Range<TYPE>> tmpRanges = [];
+      final List<Range<TYPE>> tmpRanges = [];
       for (final sr in ranges) {
         tmpRanges.addAll(sr.except(er));
       }
@@ -421,18 +436,18 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
     return ranges;
   }
 
-  static _Range? _parse<TYPE extends Comparable<TYPE>>(String? input, {
+  static Range? _parse<TYPE extends Comparable<TYPE>>(String? input, {
     required RegExp regexInfInf,
     required RegExp regexInfVal,
     required RegExp regexValInf,
     required RegExp regexValVal,
     required TYPE? Function(String) parser,
-    required _Range<TYPE> Function() ctor,
+    required Range<TYPE> Function() ctor,
     bool? startInclusive,
     bool? endInclusive,
   }) {
     if (input == null) return null;
-    final _Range dr = ctor();
+    final Range dr = ctor();
     Match? match;
     // date - date range
     match = regexValVal.firstMatch(input);
@@ -486,8 +501,8 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
   /// Returns a negative integer, zero, or a positive integer as this range is less than,
   /// equal to, or greater than the other range.
   @override
-  int compareTo(_Range other) {
-    int startCmp = _startCmp(other as _Range<TYPE>);
+  int compareTo(Range other) {
+    int startCmp = _startCmp(other as Range<TYPE>);
     return startCmp != 0 ? startCmp : _endCmp(other);
   }
 
@@ -495,7 +510,7 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
   int get hashCode => _start.hashCode ^ _end.hashCode ^ _startInclusive.hashCode ^ _endInclusive.hashCode;
 }
 
-abstract class _DiscreteRange<TYPE extends Comparable<TYPE>> extends _Range<TYPE> with IterableMixin<TYPE> {
+abstract class DiscreteRange<TYPE extends Comparable<TYPE>> extends Range<TYPE> with IterableMixin<TYPE> {
 
   /// Creates a new discrete range with the given start and end values and inclusion flags.
   ///
@@ -503,10 +518,10 @@ abstract class _DiscreteRange<TYPE extends Comparable<TYPE>> extends _Range<TYPE
   /// [end] The end value of the range.
   /// [startInclusive] Whether the start value is included in the range.
   /// [endInclusive] Whether the end value is included in the range.
-  _DiscreteRange(super.start, super.end, super.startInclusive, super.endInclusive);
+  DiscreteRange(super.start, super.end, super.startInclusive, super.endInclusive);
 
   /// Creates a new range with default inclusion flags (both inclusive).
-  _DiscreteRange._() : super._();
+  DiscreteRange._() : super._();
 
   // A (this)  contains E (element) if
   // ( E > As || E == As && A[ ) && ( E < Ae || E = Ae && A] )
@@ -561,17 +576,17 @@ abstract class _DiscreteRange<TYPE extends Comparable<TYPE>> extends _Range<TYPE
   TYPE? _next(TYPE? value);
   TYPE? _prev(TYPE? value);
 
-  static _DiscreteRange? _parse<TYPE extends Comparable<TYPE>>(String? input, {
+  static DiscreteRange? _parse<TYPE extends Comparable<TYPE>>(String? input, {
     required RegExp regexInfInf,
     required RegExp regexInfVal,
     required RegExp regexValInf,
     required RegExp regexValVal,
     required TYPE? Function(String) parser,
-    required _Range<TYPE> Function() ctor,
+    required DiscreteRange<TYPE> Function() ctor,
     bool? startInclusive,
     bool? endInclusive,
   }) {
-    final range = _Range._parse<TYPE>(input,
+    final range = Range._parse<TYPE>(input,
         regexInfInf: regexInfInf,
         regexInfVal: regexInfVal,
         regexValInf: regexValInf,
@@ -579,7 +594,7 @@ abstract class _DiscreteRange<TYPE extends Comparable<TYPE>> extends _Range<TYPE
         parser: parser,
         ctor: ctor,
         startInclusive: startInclusive,
-        endInclusive: endInclusive) as _DiscreteRange?;
+        endInclusive: endInclusive) as DiscreteRange?;
     if (range != null) {
       range._overrideInclusion(startInclusive, endInclusive);
     }
@@ -615,20 +630,20 @@ abstract class _DiscreteRange<TYPE extends Comparable<TYPE>> extends _Range<TYPE
   // or A and B are discrete (int, date) and A.end and B.start are inclusive and are adjacent
   // A---]+1[---B OK
   // doesn't consider reverse adjacency
-  static bool _adjacent<TYPE extends Comparable<TYPE>>(_DiscreteRange<TYPE> a, _DiscreteRange<TYPE> b) {
+  static bool _adjacent<TYPE extends Comparable<TYPE>>(DiscreteRange<TYPE> a, DiscreteRange<TYPE> b) {
     return (a._end != null && b._start != null) &&
         ((a._endCmp(b, false) == 0) ||
             (a._next(a.end())!.compareTo(b.start()!) == 0 && a._endInclusive && b._startInclusive));
   }
 
   @override
-  bool _esAdjacent(_Range<TYPE> that) {
-    return _adjacent(this, that as _DiscreteRange<TYPE>);
+  bool _esAdjacent(Range<TYPE> that) {
+    return _adjacent(this, that as DiscreteRange<TYPE>);
   }
 
   @override
-  bool _seAdjacent(_Range<TYPE> that) {
-    return _adjacent(that as _DiscreteRange<TYPE>, this);
+  bool _seAdjacent(Range<TYPE> that) {
+    return _adjacent(that as DiscreteRange<TYPE>, this);
   }
 }
 
@@ -637,7 +652,7 @@ abstract class _DiscreteRange<TYPE extends Comparable<TYPE>> extends _Range<TYPE
 ///
 /// [TYPE] The type of the elements in the range.
 class _RangeIterator<TYPE extends Comparable<TYPE>> implements Iterator<TYPE> {
-  final _DiscreteRange<TYPE> _range;
+  final DiscreteRange<TYPE> _range;
   TYPE _element;
   bool _moveNext = false;
 

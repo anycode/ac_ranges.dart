@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.13
+
+- Make abstract classes `Range` and `DiscreteRange` public
+- Update the LICENSE file and put license notices to sources.
+- Enhance README with detailed usage and contribution info.
+
 ## 3.0.12
 
 - Remove `_NumRange` abstraction
