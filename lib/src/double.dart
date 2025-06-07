@@ -32,59 +32,29 @@ class DoubleRange extends _Range<num> {
   /// * _&lbrack;double,infinity)_ or _(double,infinity)_ (inclusive/exclusive start, open end)
   ///
   /// Returns a [DoubleRange] instance if the input is valid, otherwise returns null.
-  static DoubleRange? parse(String? input) {
-    if (input == null) return null;
-    final DoubleRange ir = DoubleRange._();
-    Match? match;
-    match = regexValVal.firstMatch(input);
-    // double - double range
-    if (match != null) {
-      ir._startInclusive = match.group(1) == "[";
-      ir._start = double.parse(match.group(2)!);
-      ir._end = double.parse(match.group(3)!);
-      ir._endInclusive = match.group(4) == "]";
-      return ir;
-    }
-    // -infinity - infinity range
-    match = regexInfInf.firstMatch(input);
-    if (match != null) {
-      ir._startInclusive = false; // infinity is always open
-      ir._start = null;
-      ir._end = null;
-      ir._endInclusive = false; // infinity is always open
-      return ir;
-    }
-    // -infinity - double range
-    match = regexInfVal.firstMatch(input);
-    if (match != null) {
-      ir._startInclusive = false;
-      ir._start = null;
-      ir._end = double.parse(match.group(3)!);
-      ir._endInclusive = match.group(4) == "]";
-      return ir;
-    }
-    // double - infinity range
-    match = regexValInf.firstMatch(input);
-    if (match != null) {
-      ir._startInclusive = match.group(1) == "[";
-      ir._start = double.parse(match.group(2)!);
-      ir._end = null;
-      ir._endInclusive = false;
-      return ir;
-    }
-    return null;
+  static DoubleRange? parse(String? input, {bool? startInclusive, bool? endInclusive}) {
+    final range = _Range._parse<num>(input,
+        regexInfInf: regexInfInf,
+        regexInfVal: regexInfVal,
+        regexValInf: regexValInf,
+        regexValVal: regexValVal,
+        parser: (val) => double.parse(val),
+        ctor: () => DoubleRange._(),
+        startInclusive: startInclusive,
+        endInclusive: endInclusive) as DoubleRange?;
+    return range;
   }
 
   /// Regular expression for a double number.
-  static const String doubleRe = "[+-]?(?:0|[1-9][0-9]*)(?:\\.[0-9]+(?:[eE][-+]?[0-9]+)?)?";
+  static const String valRe = "[+-]?(?:0|[1-9][0-9]*)(?:\\.[0-9]+(?:[eE][-+]?[0-9]+)?)?";
   /// Regular expression for a range from negative to positive infinity.
-  static RegExp regexInfInf = RegExp("([\\(\\[])\\s*(-infinity)\\s*,\\s*(infinity)\\s*([\\]\\)])");
+  static RegExp regexInfInf = _Range._createRegex('-infinity', 'infinity');
   /// Regular expression for a range from negative infinity to a double.
-  static RegExp regexInfVal = RegExp("([\\(\\[])\\s*(-infinity)\\s*,\\s*($doubleRe)\\s*([\\]\\)])");
+  static RegExp regexInfVal = _Range._createRegex('-infinity', valRe);
   /// Regular expression for a range from a double to positive infinity.
-  static RegExp regexValInf = RegExp("([\\(\\[])\\s*($doubleRe)\\s*,\\s*(infinity)\\s*([\\]\\)])");
+  static RegExp regexValInf = _Range._createRegex(valRe, 'infinity');
   /// Regular expression for a range between two doubles.
-  static RegExp regexValVal = RegExp("([\\(\\[])\\s*($doubleRe)\\s*,\\s*($doubleRe)\\s*([\\]\\)])");
+  static RegExp regexValVal = _Range._createRegex(valRe, valRe);
 
   /// Creates a new list of [DoubleRange] instances by excluding ranges from a source list.
   ///
@@ -99,8 +69,6 @@ class DoubleRange extends _Range<num> {
   /// This method is used internally for operations that require creating a new range instance.
   /// Returns a new empty [DoubleRange] instance.
   @override
-  _Range<num> newInstance() {
-    return DoubleRange._();
-  }
+  DoubleRange newInstance() => DoubleRange._();
 
 }

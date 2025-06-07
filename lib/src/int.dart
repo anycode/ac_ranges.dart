@@ -30,63 +30,30 @@ class IntRange extends _DiscreteRange<num> {
   /// 
   /// Returns a [IntRange] instance if the input is valid, otherwise returns null.
   static IntRange? parse(String? input, {bool? startInclusive, bool? endInclusive}) {
-    if (input == null) return null;
-    final IntRange ir = IntRange._();
-    Match? match;
-    // int - int range
-    match = regexValVal.firstMatch(input);
-    if (match != null) {
-      ir._startInclusive = match.group(1) == "[";
-      ir._start = int.parse(match.group(2)!);
-      ir._end = int.parse(match.group(3)!);
-      ir._endInclusive = match.group(4) == "]";
-      ir._overrideInclusion(startInclusive, endInclusive);
-      return ir;
-    }
-    // -infinity - infinity range
-    match = regexInfInf.firstMatch(input);
-    if (match != null) {
-      ir._startInclusive = false; // infinity is always open
-      ir._start = null;
-      ir._end = null;
-      ir._endInclusive = false; // infinity is always open
-      return ir;
-    }
-    // -infinity - int range
-    match = regexInfVal.firstMatch(input);
-    if (match != null) {
-      ir._startInclusive = false; // infinity is always open
-      ir._start = null;
-      ir._end = int.parse(match.group(3)!);
-      ir._endInclusive = match.group(4) == "]";
-      ir._overrideInclusion(null, endInclusive);
-      return ir;
-    }
-    // int - infinity range
-    match = regexValInf.firstMatch(input);
-    if (match != null) {
-      ir._startInclusive = match.group(1) == "[";
-      ir._start = int.parse(match.group(2)!);
-      ir._end = null;
-      ir._endInclusive = false; // infinity is always open
-      ir._overrideInclusion(startInclusive, null);
-      return ir;
-    }
-    return null;
+    final range = _DiscreteRange._parse<num>(input,
+        regexInfInf: regexInfInf,
+        regexInfVal: regexInfVal,
+        regexValInf: regexValInf,
+        regexValVal: regexValVal,
+        parser: (val) => int.parse(val),
+        ctor: () => IntRange._(),
+        startInclusive: startInclusive,
+        endInclusive: endInclusive) as IntRange?;
+    return range ;
   }
 
   // valid ranges [] incusive, () exclusive
   // [int,int], [int,int), (int,int], (int,int)
   /// Regular expression for a int number.
-  static const String intRe = "[+-]?(?:0|[1-9][0-9]*)";
+  static const String valRe = "[+-]?(?:0|[1-9][0-9]*)";
   /// Regular expression for a range from negative to positive infinity.
-  static RegExp regexInfInf = RegExp("([\\(\\[])\\s*(-infinity)\\s*,\\s*(infinity)\\s*([\\]\\)])");
+  static RegExp regexInfInf = _Range._createRegex('-infinity', 'infinity');
   /// Regular expression for a range from negative infinity to a int.
-  static RegExp regexInfVal = RegExp("([\\(\\[])\\s*(-infinity)\\s*,\\s*($intRe)\\s*([\\]\\)])");
+  static RegExp regexInfVal = _Range._createRegex('-infinity', valRe);
   /// Regular expression for a range from a int to positive infinity.
-  static RegExp regexValInf = RegExp("([\\(\\[])\\s*($intRe)\\s*,\\s*(infinity)\\s*([\\]\\)])");
+  static RegExp regexValInf = _Range._createRegex(valRe, 'infinity');
   /// Regular expression for a range between two ints.
-  static RegExp regexValVal = RegExp("([\\(\\[])\\s*($intRe)\\s*,\\s*($intRe)\\s*([\\]\\)])");
+  static RegExp regexValVal = _Range._createRegex(valRe, valRe);
 
   /// Creates a new list of [intRange] instances by excluding ranges from a source list.
   ///
@@ -101,9 +68,7 @@ class IntRange extends _DiscreteRange<num> {
   /// This method is used internally for operations that require creating a new range instance.
   /// Returns a new empty [intRange] instance.
   @override
-  _DiscreteRange<num> newInstance() {
-    return IntRange._();
-  }
+  IntRange newInstance() => IntRange._();
 
   /// Returns the next value in the range.
   ///

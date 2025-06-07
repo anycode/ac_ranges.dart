@@ -421,6 +421,62 @@ abstract class _Range<TYPE extends Comparable<TYPE>> implements Comparable<_Rang
     return ranges;
   }
 
+  static _Range? _parse<TYPE extends Comparable<TYPE>>(String? input, {
+    required RegExp regexInfInf,
+    required RegExp regexInfVal,
+    required RegExp regexValInf,
+    required RegExp regexValVal,
+    required TYPE? Function(String) parser,
+    required _Range<TYPE> Function() ctor,
+    bool? startInclusive,
+    bool? endInclusive,
+  }) {
+    if (input == null) return null;
+    final _Range dr = ctor();
+    Match? match;
+    // date - date range
+    match = regexValVal.firstMatch(input);
+    if (match != null) {
+      dr._startInclusive = match.group(1) == "[";
+      dr._start = parser(match.group(2)!);
+      dr._end = parser(match.group(3)!);
+      dr._endInclusive = match.group(4) == "]";
+      return dr;
+    }
+    // -infinity - infinity range
+    match = regexInfInf.firstMatch(input);
+    if (match != null) {
+      dr._startInclusive = false; // infinity is always open
+      dr._start = null;
+      dr._end = null;
+      dr._endInclusive = false; // infinity is always open
+      return dr;
+    }
+    // -infinity - date range
+    match = regexInfVal.firstMatch(input);
+    if (match != null) {
+      dr._startInclusive = false; // infinity is always open
+      dr._start = null;
+      dr._end = parser(match.group(3)!);
+      dr._endInclusive = match.group(4) == "]";
+      return dr;
+    }
+    // date - infinity range
+    match = regexValInf.firstMatch(input);
+    if (match != null) {
+      dr._startInclusive = match.group(1) == "[";
+      dr._start = parser(match.group(2)!);
+      dr._end = null;
+      dr._endInclusive = false; // infinity is always open
+      return dr;
+    }
+    return null;
+  }
+
+  static RegExp _createRegex(String startRe, String endRe) {
+    return RegExp("([\\(\\[])\\s*($startRe)\\s*,\\s*($endRe)\\s*([\\]\\)])");
+  }
+
   /// Compares this range to another range. First compare starts of the ranges. If start
   /// of this range is less than the start of the other, return -1, if it's greater, return 1.
   /// If both starts are equal, compare ends of the ranges.
@@ -505,14 +561,40 @@ abstract class _DiscreteRange<TYPE extends Comparable<TYPE>> extends _Range<TYPE
   TYPE? _next(TYPE? value);
   TYPE? _prev(TYPE? value);
 
+  static _DiscreteRange? _parse<TYPE extends Comparable<TYPE>>(String? input, {
+    required RegExp regexInfInf,
+    required RegExp regexInfVal,
+    required RegExp regexValInf,
+    required RegExp regexValVal,
+    required TYPE? Function(String) parser,
+    required _Range<TYPE> Function() ctor,
+    bool? startInclusive,
+    bool? endInclusive,
+  }) {
+    final range = _Range._parse<TYPE>(input,
+        regexInfInf: regexInfInf,
+        regexInfVal: regexInfVal,
+        regexValInf: regexValInf,
+        regexValVal: regexValVal,
+        parser: parser,
+        ctor: ctor,
+        startInclusive: startInclusive,
+        endInclusive: endInclusive) as _DiscreteRange?;
+    if (range != null) {
+      range._overrideInclusion(startInclusive, endInclusive);
+    }
+    return range;
+  }
+
+
   void _overrideInclusion(bool? startInclusive, bool? endInclusive) {
-    if (startInclusive != null && startInclusive != _startInclusive) {
+    if (_start != null && startInclusive != null && startInclusive != _startInclusive) {
       // override start inclusion
       // change to next value for ( -> [  and change to prev value for [ -> (
       _start = startInclusive ? _next(_start) : _prev(_start);
       _startInclusive = startInclusive;
     }
-    if (endInclusive != null && endInclusive != _endInclusive) {
+    if (_end != null && endInclusive != null && endInclusive != _endInclusive) {
       // override end inclusion
       // change to prev value for ) -> ]  and change to next value for ] -> )
       _end = endInclusive ? _prev(_end) : _next(_end);

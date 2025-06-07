@@ -47,61 +47,28 @@ class DateRange extends _DiscreteRange<DateTime> {
   ///
   /// Returns a [DateRange] object representing the parsed date range, or null if the input string is invalid.
   static DateRange? parse(String? input, {bool? startInclusive, bool? endInclusive}) {
-    if (input == null) return null;
-    final DateRange dr = DateRange._();
-    Match? match;
-    // date - date range
-    match = regexValVal.firstMatch(input);
-    if (match != null) {
-      dr._startInclusive = match.group(1) == "[";
-      dr._start = DateTime.parse("${match.group(2)!}T00:00:00Z");
-      dr._end = DateTime.parse("${match.group(3)!}T00:00:00Z");
-      dr._endInclusive = match.group(4) == "]";
-      dr._overrideInclusion(startInclusive, endInclusive);
-      return dr;
-    }
-    // -infinity - infinity range
-    match = regexInfInf.firstMatch(input);
-    if (match != null) {
-      dr._startInclusive = false; // infinity is always open
-      dr._start = null;
-      dr._end = null;
-      dr._endInclusive = false; // infinity is always open
-      return dr;
-    }
-    // -infinity - date range
-    match = regexInfVal.firstMatch(input);
-    if (match != null) {
-      dr._startInclusive = false; // infinity is always open
-      dr._start = null;
-      dr._end = DateTime.parse("${match.group(3)!}T00:00:00Z");
-      dr._endInclusive = match.group(4) == "]";
-      dr._overrideInclusion(null, endInclusive);
-      return dr;
-    }
-    // date - infinity range
-    match = regexValInf.firstMatch(input);
-    if (match != null) {
-      dr._startInclusive = match.group(1) == "[";
-      dr._start = DateTime.parse("${match.group(2)!}T00:00:00Z");
-      dr._end = null;
-      dr._endInclusive = false; // infinity is always open
-      dr._overrideInclusion(startInclusive, null);
-      return dr;
-    }
-    return null;
+    final range = _DiscreteRange._parse<DateTime>(input,
+        regexInfInf: regexInfInf,
+        regexInfVal: regexInfVal,
+        regexValInf: regexValInf,
+        regexValVal: regexValVal,
+        parser: (val) => DateTime.parse("${val}T00:00:00Z"),
+        ctor: () => DateRange._(),
+        startInclusive: startInclusive,
+        endInclusive: endInclusive) as DateRange?;
+    return range;
   }
 
   /// Regular expression for a date.
-  static const String dateRe = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
+  static const String valRe = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
   /// Regular expression for a range from negative to positive infinity.
-  static RegExp regexInfInf = RegExp("([\\(\\[])\\s*(-infinity)\\s*,\\s*(infinity)\\s*([\\]\\)])");
+  static RegExp regexInfInf = _Range._createRegex('-infinity', 'infinity');
   /// Regular expression for a range from negative infinity to a date.
-  static RegExp regexInfVal = RegExp("([\\(\\[])\\s*(-infinity)\\s*,\\s*($dateRe)\\s*([\\]\\)])");
+  static RegExp regexInfVal = _Range._createRegex('-infinity', valRe);
   /// Regular expression for a range from a date to positive infinity.
-  static RegExp regexValInf = RegExp("([\\(\\[])\\s*($dateRe)\\s*,\\s*(infinity)\\s*([\\]\\)])");
+  static RegExp regexValInf = _Range._createRegex(valRe, 'infinity');
   /// Regular expression for a range between two dates.
-  static RegExp regexValVal = RegExp("([\\(\\[])\\s*($dateRe)\\s*,\\s*($dateRe)\\s*([\\]\\)])");
+  static RegExp regexValVal = _Range._createRegex(valRe, valRe);
 
   /// Returns a list of [DateRange] objects that represent the difference between the [source] and [exceptions] lists.
   ///
@@ -128,9 +95,7 @@ class DateRange extends _DiscreteRange<DateTime> {
   ///
   /// This method is used internally by the [_Range] class to create new instances of the same type.
   @override
-  _DiscreteRange<DateTime> newInstance() {
-    return DateRange._();
-  }
+  DateRange newInstance() => DateRange._();
 
   /// Returns the next date after the given [value].
   ///
