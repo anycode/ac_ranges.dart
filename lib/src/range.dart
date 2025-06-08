@@ -24,7 +24,7 @@ abstract class Range<TYPE extends Comparable<TYPE>> implements Comparable<Range>
   /// [end] The end value of the range.
   /// [startInclusive] Whether the start value is included in the range.
   /// [endInclusive] Whether the end value is included in the range.
-  Range(this._start, this._end, bool startInclusive, bool endInclusive)
+  Range(this._start, this._end, {bool startInclusive = true, bool endInclusive = false})
       : _startInclusive = _start == null ? false : startInclusive,
         _endInclusive = _end == null ? false : endInclusive;
 
@@ -206,7 +206,10 @@ abstract class Range<TYPE extends Comparable<TYPE>> implements Comparable<Range>
   /// [that] The other range to check whether it's contained in this range.
   ///
   /// Returns true if this range contains single value, false otherwise.
-  bool contains(Object? obj) {
+  bool contains(Object? obj) => _contains(obj);
+
+  // do not put directly to `contains(Object?)`, so it's possible to override `contains(Object?)` in subclasses
+  bool _contains(Object? obj) {
     if (obj is! TYPE) return false;
     final int startCmp = _start?.compareTo(obj) ?? -1; // -infinity is less than any value
     final int endCmp = _end?.compareTo(obj) ?? 1; // infinity is greater than any value
@@ -510,7 +513,7 @@ abstract class Range<TYPE extends Comparable<TYPE>> implements Comparable<Range>
   int get hashCode => _start.hashCode ^ _end.hashCode ^ _startInclusive.hashCode ^ _endInclusive.hashCode;
 }
 
-abstract class DiscreteRange<TYPE extends Comparable<TYPE>> extends Range<TYPE> with IterableMixin<TYPE> {
+abstract class DiscreteRange<CTYPE extends Comparable<CTYPE>, ITYPE extends CTYPE> extends Range<CTYPE> with IterableMixin<ITYPE> {
 
   /// Creates a new discrete range with the given start and end values and inclusion flags.
   ///
@@ -518,7 +521,7 @@ abstract class DiscreteRange<TYPE extends Comparable<TYPE>> extends Range<TYPE> 
   /// [end] The end value of the range.
   /// [startInclusive] Whether the start value is included in the range.
   /// [endInclusive] Whether the end value is included in the range.
-  DiscreteRange(super.start, super.end, super.startInclusive, super.endInclusive);
+  DiscreteRange(super.start, super.end, {bool super.startInclusive = true, super.endInclusive = false});
 
   /// Creates a new range with default inclusion flags (both inclusive).
   DiscreteRange._() : super._();
@@ -531,7 +534,7 @@ abstract class DiscreteRange<TYPE extends Comparable<TYPE>> extends Range<TYPE> 
   ///
   /// Returns true if this range contains single value, false otherwise.
   @override
-  bool contains(Object? obj) => super.contains(obj);
+  bool contains(Object? obj) => super._contains(obj);
 
   // call super (_Range) _toString, otherwise Iterable toString() is called
   // Mixins have higher priority and super.toString() would call Iterable.toString()
@@ -541,8 +544,8 @@ abstract class DiscreteRange<TYPE extends Comparable<TYPE>> extends Range<TYPE> 
   /// Returns an iterator over the elements in this range.
   /// Throws an exception if the range is not discrete or is infinite.
   @override
-  Iterator<TYPE> get iterator => _start != null && _end != null
-      ? _RangeIterator<TYPE>(this)
+  Iterator<ITYPE> get iterator => _start != null && _end != null
+      ? _RangeIterator<CTYPE, ITYPE>(this)
       : throw Exception('Cannot iterate over infinite range');
 
   /// If [inclusive] is provided and differs from the current start inclusion,
@@ -552,7 +555,7 @@ abstract class DiscreteRange<TYPE extends Comparable<TYPE>> extends Range<TYPE> 
   ///
   /// Returns the start value of the range, optionally with inclusion overridden.
   @override
-  TYPE? start({bool? inclusive}) =>
+  CTYPE? start({bool? inclusive}) =>
       _start == null || inclusive == null || _startInclusive == inclusive
           ? _start
           : inclusive
@@ -566,27 +569,27 @@ abstract class DiscreteRange<TYPE extends Comparable<TYPE>> extends Range<TYPE> 
   ///
   /// Returns the end value of the range, optionally with inclusion overridden.
   @override
-  TYPE? end({bool? inclusive}) =>
+  CTYPE? end({bool? inclusive}) =>
       _end == null || inclusive == null || _endInclusive == inclusive
           ? _end
           : inclusive
           ? _prev(_end)
           : _next(_end);
 
-  TYPE? _next(TYPE? value);
-  TYPE? _prev(TYPE? value);
+  CTYPE? _next(CTYPE? value);
+  CTYPE? _prev(CTYPE? value);
 
-  static DiscreteRange? _parse<TYPE extends Comparable<TYPE>>(String? input, {
+  static DiscreteRange? _parse<CTYPE extends Comparable<CTYPE>, ITYPE extends CTYPE>(String? input, {
     required RegExp regexInfInf,
     required RegExp regexInfVal,
     required RegExp regexValInf,
     required RegExp regexValVal,
-    required TYPE? Function(String) parser,
-    required DiscreteRange<TYPE> Function() ctor,
+    required CTYPE? Function(String) parser,
+    required DiscreteRange<CTYPE, ITYPE> Function() ctor,
     bool? startInclusive,
     bool? endInclusive,
   }) {
-    final range = Range._parse<TYPE>(input,
+    final range = Range._parse<CTYPE>(input,
         regexInfInf: regexInfInf,
         regexInfVal: regexInfVal,
         regexValInf: regexValInf,
@@ -630,36 +633,36 @@ abstract class DiscreteRange<TYPE extends Comparable<TYPE>> extends Range<TYPE> 
   // or A and B are discrete (int, date) and A.end and B.start are inclusive and are adjacent
   // A---]+1[---B OK
   // doesn't consider reverse adjacency
-  static bool _adjacent<TYPE extends Comparable<TYPE>>(DiscreteRange<TYPE> a, DiscreteRange<TYPE> b) {
+  static bool _adjacent<CTYPE extends Comparable<CTYPE>, ITYPE extends CTYPE>(DiscreteRange<CTYPE, ITYPE> a, DiscreteRange<CTYPE, ITYPE> b) {
     return (a._end != null && b._start != null) &&
         ((a._endCmp(b, false) == 0) ||
             (a._next(a.end())!.compareTo(b.start()!) == 0 && a._endInclusive && b._startInclusive));
   }
 
   @override
-  bool _esAdjacent(Range<TYPE> that) {
-    return _adjacent(this, that as DiscreteRange<TYPE>);
+  bool _esAdjacent(Range<CTYPE> that) {
+    return _adjacent(this, that as DiscreteRange<CTYPE, ITYPE>);
   }
 
   @override
-  bool _seAdjacent(Range<TYPE> that) {
-    return _adjacent(that as DiscreteRange<TYPE>, this);
+  bool _seAdjacent(Range<CTYPE> that) {
+    return _adjacent(that as DiscreteRange<CTYPE, ITYPE>, this);
   }
 }
 
 
 /// An iterator over the elements in a discrete range.
 ///
-/// [TYPE] The type of the elements in the range.
-class _RangeIterator<TYPE extends Comparable<TYPE>> implements Iterator<TYPE> {
-  final DiscreteRange<TYPE> _range;
-  TYPE _element;
+/// [CTYPE] The type of the elements in the range.
+class _RangeIterator<CTYPE extends Comparable<CTYPE>, ITYPE extends CTYPE> implements Iterator<ITYPE> {
+  final DiscreteRange<CTYPE, ITYPE> _range;
+  CTYPE _element;
   bool _moveNext = false;
 
   _RangeIterator(this._range) : _element = _range.start(inclusive: true)!;
 
   @override
-  TYPE get current => _element;
+  ITYPE get current => _element as ITYPE;
 
   @override
   bool moveNext() {

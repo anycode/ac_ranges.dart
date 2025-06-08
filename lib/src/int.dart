@@ -22,13 +22,12 @@ part of 'package:ac_ranges/ac_ranges.dart';
 ///
 /// This class allows defining a range with a start and end value,
 /// and whether the start and end are inclusive or exclusive.
-class IntRange extends DiscreteRange<num> {
+class IntRange extends DiscreteRange<num, int> {
   /// Creates a new [IntRange] with the specified [start] and [end] values.
   ///
   /// The [startInclusive] and [endInclusive] parameters determine whether the
   /// start and end values are included in the range, respectively.
-  IntRange(int start, int end, {bool startInclusive = true, bool endInclusive = false})
-      : super(start, end, startInclusive, endInclusive);
+  IntRange(super.start, super.end, {bool super.startInclusive = true, super.endInclusive = false});
 
   /// Creates an empty [IntRange].
   IntRange._() : super._();
@@ -46,7 +45,7 @@ class IntRange extends DiscreteRange<num> {
   /// 
   /// Returns a [IntRange] instance if the input is valid, otherwise returns null.
   static IntRange? parse(String? input, {bool? startInclusive, bool? endInclusive}) {
-    final range = DiscreteRange._parse<num>(input,
+    final range = DiscreteRange._parse<num, int>(input,
         regexInfInf: regexInfInf,
         regexInfVal: regexInfVal,
         regexValInf: regexValInf,
@@ -85,6 +84,11 @@ class IntRange extends DiscreteRange<num> {
   /// Returns a new empty [intRange] instance.
   @override
   IntRange newInstance() => IntRange._();
+
+  @override
+  Iterator<int> get iterator => _start != null && _end != null
+      ? _RangeIterator<num, int>(this)
+      : throw Exception('Cannot iterate over infinite range');
 
   /// Returns the next value in the range.
   ///

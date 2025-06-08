@@ -21,7 +21,7 @@ part of 'package:ac_ranges/ac_ranges.dart';
 /// This class extends [Range] and provides specific functionality for
 /// working with date ranges. It supports inclusive and exclusive boundaries,
 /// parsing from string representations, and formatting date ranges.
-class DateRange extends DiscreteRange<DateTime> {
+class DateRange extends DiscreteRange<DateTime, DateTime> {
   /// Creates a new [DateRange] instance.
   ///
   /// The [start] and [end] parameters define the boundaries of the range.
@@ -31,9 +31,9 @@ class DateRange extends DiscreteRange<DateTime> {
   /// [endInclusive] determines whether the end date is included in the range.
   ///
   /// The time part of the start and end dates is ignored, and only the date part is considered.
-  DateRange(DateTime? start, DateTime? end, {bool startInclusive = true, bool endInclusive = false})
+  DateRange(DateTime? start, DateTime? end, {super.startInclusive = true, super.endInclusive = false})
       : super(start == null ? null : DateTime.utc(start.year, start.month, start.day),
-            end == null ? null : DateTime.utc(end.year, end.month, end.day), startInclusive, endInclusive);
+            end == null ? null : DateTime.utc(end.year, end.month, end.day));
 
   DateRange._() : super._();
 
@@ -63,7 +63,7 @@ class DateRange extends DiscreteRange<DateTime> {
   ///
   /// Returns a [DateRange] object representing the parsed date range, or null if the input string is invalid.
   static DateRange? parse(String? input, {bool? startInclusive, bool? endInclusive}) {
-    final range = DiscreteRange._parse<DateTime>(input,
+    final range = DiscreteRange._parse<DateTime, DateTime>(input,
         regexInfInf: regexInfInf,
         regexInfVal: regexInfVal,
         regexValInf: regexValInf,
