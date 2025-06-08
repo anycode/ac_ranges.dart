@@ -228,4 +228,48 @@ void main() {
       expect(range1 == range6, isFalse);
     });
   });
+
+  test('IntRange iteration', () {
+    final IntRange ir1 = IntRange(1, 7); // [1,7)
+    final result1 = <int>[];
+    print("Iterate [) int range $ir1");
+    for (int i in ir1) {
+      print("iteration value $i");
+      result1.add(i);
+    }
+    expect(result1, [1, 2, 3, 4, 5, 6]);
+
+    final IntRange ir2 = IntRange(1, 7, endInclusive: true); // [1,7]
+    final result2 = <int>[];
+    print("Iterate [] int range $ir2");
+    for (int i in ir2) {
+      print("iteration value $i");
+      result2.add(i);
+    }
+    expect(result2, [1, 2, 3, 4, 5, 6, 7]);
+
+    final IntRange ir3 = IntRange(1, 7, startInclusive: false); // (1,7)
+    final result3 = <int>[];
+    print("Iterate () int range $ir3");
+    for (int i in ir3) {
+      print("iteration value $i");
+      result3.add(i);
+    }
+    expect(result3, [2, 3, 4, 5, 6]);
+
+    final IntRange ir4 = IntRange(1, 7, startInclusive: false, endInclusive: true); // (1,7]
+    final result4 = <int>[];
+    print("Iterate (] int range $ir4");
+    for (int i in ir4) {
+      print("iteration value $i");
+      result4.add(i);
+    }
+    expect(result4, [2, 3, 4, 5, 6, 7]);
+
+    print("First of $ir1 is ${ir1.first}");
+    print("Last of $ir1 is ${ir1.last}");
+    expect(ir1.first, 1);
+    expect(ir1.last, 6);
+  });
+
 }

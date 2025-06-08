@@ -189,7 +189,7 @@ void main() {
 
     });
 
-    test('iteration', () {
+    test('DateRange iteration', () {
       final DateRange iter1 = DateRange(DateTime(2019, 04, 01), DateTime(2019, 04, 7));
       print("Iterate [) range $iter1");
       final result = <DateTime>[];
