@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.14
+
+- Added comprehensive tests for iteration over `IntRange` and `DateRange`
+- Extended `ac_ranges_example.dart` with examples of all range types
+
 ## 3.0.13
 
 - Make abstract classes `Range` and `DiscreteRange` public
