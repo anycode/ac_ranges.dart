@@ -3,7 +3,7 @@ description: Date / Int / Double ranges
 version: 3.0.13
 homepage: https://github.com/anycode/ac_ranges.dart.git
 repository: https://github.com/anycode/ac_ranges.dart.git
-publish_to: https://pub.anycode.dev
+#publish_to: https://pub.anycode.dev
 
 environment:
   sdk: ">=2.17.0 <4.0.0"

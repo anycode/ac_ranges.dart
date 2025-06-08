@@ -28,8 +28,7 @@ class DoubleRange extends Range<num> {
   /// The [start] and [end] parameters define the range's boundaries.
   /// [startInclusive] determines if the start value is included in the range (defaults to true).
   /// [endInclusive] determines if the end value is included in the range (defaults to false).
-  DoubleRange(double start, double end, {bool startInclusive = true, bool endInclusive = false})
-      : super(start, end, startInclusive, endInclusive);
+  DoubleRange(super.start, super.end, {super.startInclusive = true, super.endInclusive = false});
 
   /// Creates a new empty [DoubleRange] instance.
   ///

@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2025 Martin Edlman - Anycode <ac@anycode.dev>
  *
@@ -17,6 +18,17 @@
 import 'package:ac_ranges/ac_ranges.dart';
 
 main() {
+  print("=== DATE RANGE EXAMPLES ===");
+  _dateRangeExamples();
+
+  print("\n=== INT RANGE EXAMPLES ===");
+  _intRangeExamples();
+
+  print("\n=== DOUBLE RANGE EXAMPLES ===");
+  _doubleRangeExamples();
+}
+
+void _dateRangeExamples() {
   final DateRange dr1 = DateRange(DateTime(2019, 01, 01), DateTime(2019, 02, 28));
   final DateRange dr2 = DateRange(DateTime(2019, 02, 01), DateTime(2019, 03, 28));
   final DateRange dr3 = DateRange(DateTime(2019, 04, 01), DateTime(2019, 04, 28));
@@ -111,4 +123,124 @@ main() {
   final DateRange? drak2 = DateRange.parse('[2020-02-29,2020-03-08)');
   print("$drak1.isSubsetOf($drak2) = ${drak1?.isSubsetOf(drak2!)}");
   print("$drak2.isSupersetOf($drak1) = ${drak2?.isSupersetOf(drak1!)}");
+}
+
+void _intRangeExamples() {
+  // Základní IntRange operace
+  final IntRange ir1 = IntRange(1, 10);
+  final IntRange ir2 = IntRange(5, 15);
+  final IntRange ir3 = IntRange(20, 25);
+  final IntRange ir4 = IntRange(10, 20, startInclusive: false);
+  final IntRange ir5 = IntRange(8, 12, endInclusive: true);
+
+  print("Basic IntRange operations:");
+  print("union $ir1 + $ir2 = ${ir1 + ir2}");
+  print("except $ir1 - $ir2 = ${ir1 - ir2}");
+  print("intersect $ir1 * $ir2 = ${ir1 * ir2}");
+
+  print("Non-overlapping ranges:");
+  print("union $ir1 + $ir3 = ${ir1 + ir3}");
+  print("except $ir1 - $ir3 = ${ir1 - ir3}");
+  print("intersect $ir1 * $ir3 = ${ir1 * ir3}");
+
+  print("Contains tests:");
+  print("$ir1 contains 5 = ${ir1.contains(5)}");
+  print("$ir1 contains 10 = ${ir1.contains(10)}");
+  print("$ir1 contains 15 = ${ir1.contains(15)}");
+  print("$ir5 contains 12 = ${ir5.contains(12)}"); // endInclusive test
+
+  print("Relationship tests:");
+  print("$ir1 overlaps $ir2 = ${ir1.overlaps(ir2)}");
+  print("$ir1 overlaps $ir3 = ${ir1.overlaps(ir3)}");
+  print("$ir1 isAdjacentTo $ir4 = ${ir1.isAdjacentTo(ir4)}");
+
+  print("Iteration over IntRange $ir1:");
+  for (int i in ir1) {
+    print("value: $i");
+    if (i > 5) break; // Omezíme výstup
+  }
+
+  // Nekonečné ranges
+  final IntRange iri1 = IntRange(null, 10);
+  final IntRange iri2 = IntRange(5, null);
+  final IntRange iri3 = IntRange(null, null);
+
+  print("Infinite ranges:");
+  print("$iri1 contains -100 = ${iri1.contains(-100)}");
+  print("$iri1 contains 15 = ${iri1.contains(15)}");
+  print("$iri2 contains 100 = ${iri2.contains(100)}");
+  print("$iri2 contains 3 = ${iri2.contains(3)}");
+  print("$iri3 contains 999999 = ${iri3.contains(999999)}");
+
+  // Parsing
+  final IntRange? irp1 = IntRange.parse('[1,10)');
+  final IntRange? irp2 = IntRange.parse('(5,15]');
+  print("Parsed ranges:");
+  print("Parsed '[1,10)' = $irp1");
+  print("Parsed '(5,15]' = $irp2");
+  print("$irp1 * $irp2 = ${irp1! * irp2!}");
+}
+
+void _doubleRangeExamples() {
+  // Základní DoubleRange operace
+  final DoubleRange dr1 = DoubleRange(1.0, 10.5);
+  final DoubleRange dr2 = DoubleRange(5.2, 15.7);
+  final DoubleRange dr3 = DoubleRange(20.1, 25.8);
+  final DoubleRange dr4 = DoubleRange(10.5, 20.1, startInclusive: false);
+  final DoubleRange dr5 = DoubleRange(8.3, 12.7, endInclusive: true);
+
+  print("Basic DoubleRange operations:");
+  print("union $dr1 + $dr2 = ${dr1 + dr2}");
+  print("except $dr1 - $dr2 = ${dr1 - dr2}");
+  print("intersect $dr1 * $dr2 = ${dr1 * dr2}");
+
+  print("Non-overlapping ranges:");
+  print("union $dr1 + $dr3 = ${dr1 + dr3}");
+  print("except $dr1 - $dr3 = ${dr1 - dr3}");
+  print("intersect $dr1 * $dr3 = ${dr1 * dr3}");
+
+  print("Contains tests:");
+  print("$dr1 contains 5.5 = ${dr1.contains(5.5)}");
+  print("$dr1 contains 10.5 = ${dr1.contains(10.5)}");
+  print("$dr1 contains 15.0 = ${dr1.contains(15.0)}");
+  print("$dr5 contains 12.7 = ${dr5.contains(12.7)}"); // endInclusive test
+
+  print("Relationship tests:");
+  print("$dr1 overlaps $dr2 = ${dr1.overlaps(dr2)}");
+  print("$dr1 overlaps $dr3 = ${dr1.overlaps(dr3)}");
+  print("$dr1 isAdjacentTo $dr4 = ${dr1.isAdjacentTo(dr4)}");
+
+  // Precision tests
+  final DoubleRange drp1 = DoubleRange(0.1, 0.2);
+  final DoubleRange drp2 = DoubleRange(0.15, 0.25);
+  print("Precision tests:");
+  print("$drp1 * $drp2 = ${drp1 * drp2}");
+  print("$drp1 contains 0.15 = ${drp1.contains(0.15)}");
+
+  // Nekonečné ranges
+  final DoubleRange dri1 = DoubleRange(null, 10.5);
+  final DoubleRange dri2 = DoubleRange(5.2, null);
+  final DoubleRange dri3 = DoubleRange(null, null);
+
+  print("Infinite ranges:");
+  print("$dri1 contains -100.7 = ${dri1.contains(-100.7)}");
+  print("$dri1 contains 15.3 = ${dri1.contains(15.3)}");
+  print("$dri2 contains 100.9 = ${dri2.contains(100.9)}");
+  print("$dri2 contains 3.1 = ${dri2.contains(3.1)}");
+  print("$dri3 contains 999999.999 = ${dri3.contains(999999.999)}");
+
+  // Parsing
+  final DoubleRange? drpa1 = DoubleRange.parse('[1.5,10.7)');
+  final DoubleRange? drpa2 = DoubleRange.parse('(5.2,15.1]');
+  print("Parsed ranges:");
+  print("Parsed '[1.5,10.7)' = $drpa1");
+  print("Parsed '(5.2,15.1]' = $drpa2");
+  print("$drpa1 * $drpa2 = ${drpa1! * drpa2!}");
+
+  // Subset/Superset tests
+  final DoubleRange drs1 = DoubleRange(1.0, 10.0);
+  final DoubleRange drs2 = DoubleRange(2.5, 7.5);
+  print("Subset/Superset tests:");
+  print("$drs2 isSubsetOf $drs1 = ${drs2.isSubsetOf(drs1)}");
+  print("$drs1 isSupersetOf $drs2 = ${drs1.isSupersetOf(drs2)}");
 }
