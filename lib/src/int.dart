@@ -27,7 +27,7 @@ class IntRange extends DiscreteRange<num, int> {
   ///
   /// The [startInclusive] and [endInclusive] parameters determine whether the
   /// start and end values are included in the range, respectively.
-  IntRange(super.start, super.end, {bool super.startInclusive = true, super.endInclusive = false});
+  IntRange(super.start, super.end, {super.startInclusive = true, super.endInclusive = false});
 
   /// Creates an empty [IntRange].
   IntRange._() : super._();

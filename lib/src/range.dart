@@ -521,7 +521,7 @@ abstract class DiscreteRange<CTYPE extends Comparable<CTYPE>, ITYPE extends CTYP
   /// [end] The end value of the range.
   /// [startInclusive] Whether the start value is included in the range.
   /// [endInclusive] Whether the end value is included in the range.
-  DiscreteRange(super.start, super.end, {bool super.startInclusive = true, super.endInclusive = false});
+  DiscreteRange(super.start, super.end, {super.startInclusive = true, super.endInclusive = false});
 
   /// Creates a new range with default inclusion flags (both inclusive).
   DiscreteRange._() : super._();
